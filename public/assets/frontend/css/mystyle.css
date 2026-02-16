@@ -1,0 +1,246 @@
+:root {
+  --primary-color: #8f50a2;
+  --secondary-color: #643272;
+  --third-color:#d398b9;
+  --forth-color: #fb246a;
+  --fifth-color: #1b0b20;
+}
+
+.footer-bg {
+    background: #1b0c20;
+}
+
+#scrollUp {
+    background: var(--third-color);
+} 
+
+.preloader {
+    .preloader-circle {
+        border-top-color: var(--primary-color);
+    }
+}
+
+.section-tittle {
+    span{
+        color: var(--secondary-color);
+    }
+}
+
+.apply-process-area{
+    .single-process{
+        background: #230556;
+    }
+}
+
+.testimonial-area {
+  .dot-style {
+    .slick-dots {
+      .slick-active {
+        button {
+          background: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+.border-btn2 {
+    border: 1px solid var(--third-color);
+    color: var(--third-color);
+    &::before{
+        background: var(--third-color);
+    }
+}
+
+.job-listing-area {
+  .count-job {
+    .select-job-items {
+      .nice-select {
+        width: auto;
+      }
+    }
+  }
+}
+
+.job-category-listing {
+  .single-listing {
+    .select-Categories {
+      .container {
+        input:checked ~ .checkmark {
+          background-color: #642d72;
+          border: 2px solid transparent;
+        }
+      }
+    }
+  }
+}
+
+.single-job-items {
+    &:hover{
+        box-shadow: 0px 0px 10px 2px #ccc;
+    }
+    .job-items{
+        .job-tittle{
+            a{
+                h4{
+                    &:hover {
+                        color: var(--secondary-color);
+                    }
+                }
+            }
+        }
+    }
+    .items-link {
+        a{
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            &:hover {
+                background: var(--secondary-color);
+                border: 1px solid var(--secondary-color);  
+                color: #FFF;
+            } 
+        }
+    }
+}
+
+
+.support-company-area {
+  .support-location-img {
+    .support-img-cap {
+      background: var(--fifth-color);
+    }
+  }
+}
+
+.section-overly {
+    &::before{
+        background-color: rgb(56 23 66 / 72%);
+    }
+}    
+
+.home-blog-area {
+  .home-blog-single {
+    .blog-img-cap {
+      .blog-img {
+        .blog-date {
+          background: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+.our-services {
+  .single-services {
+    border: 1px solid #642d722b;
+    &:hover {
+      .services-ion {
+        span {
+          color: var(--primary-color);
+        }
+      }
+      .services-cap{
+        h5{
+            a{
+                color: var(--primary-color);
+            }
+        }
+        span{
+            color: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+
+.btn {
+    background: var(--secondary-color);
+    
+    &:hover {
+        background: var(--secondary-color);
+    }
+
+    &::before {
+        background: var(--third-color);
+    }
+}    
+
+.head-btn2 {
+    background: none !important;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    
+    &:hover{
+       background: var(--secondary-color) !important; 
+    }
+
+    &::before {
+        background: var(--third-color);
+    }
+}
+
+.header-area {
+  .main-menu {
+    ul {
+      li {
+        &:hover {
+          > a {
+            color: var(--third-color);
+          }
+        }
+      }
+
+      ul.submenu {
+        border-top: 5px solid var(--third-color);
+        li {
+            &:hover {
+            > a {
+                color: var(--third-color);
+            }
+            }
+        }
+      }
+    }
+  }
+}
+
+form.search-box {
+  .search-form {
+    a {
+      width: 100%;
+      height: 70px;
+      background: var(--secondary-color);
+    }
+  }
+}
+
+.contact_form{
+  .form-group{
+      label{
+        color: red;
+      }
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color) ; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #b360ff; 
+}
