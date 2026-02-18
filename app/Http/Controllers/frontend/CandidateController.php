@@ -46,7 +46,7 @@ use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-class CustomerDashboardController extends Controller
+class CandidateController extends Controller
 {
     public function index()
     {
@@ -77,11 +77,40 @@ class CustomerDashboardController extends Controller
         // if (!empty($admin->role) && $admin->role > 0) {
         //     return redirect()->route('admin.dashboard');
         // } else {
-            return view('pages.frontend.customerdashboard.index',compact('gallery_home','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders'));
+            return view('pages.frontend.candidatedashboard.index',compact('gallery_home','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders'));
         //}
     }
 
-     public function userProfileUpdate(Request $request, $user_id){
+    public function userProfileUpdate(Request $request, $user_id)
+    {
+        //$user = auth()->user(); // secure (ignore passed ID)
+        $user = User::where('status',1)->where('id',$user_id)->first();
+
+        if ($request->hasFile('profile_img')) {
+
+            $request->validate([
+                'profile_img' => 'image|mimes:jpg,jpeg,png|max:2048'
+            ]);
+
+            // Delete old image
+            if ($user->profile_img && file_exists(public_path($user->profile_img))) {
+                unlink(public_path($user->profile_img));
+            }
+
+            $file = $request->file('profile_img');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('public/assets/frontend/candidates'), $filename);
+
+            $user->profile_img = $filename;
+            $user->save();
+
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['status' => 'error'], 400);
+    }
+
+     public function userProfileDetailsUpdate(Request $request, $user_id){
         //VisitorHelper::updateVisitorCount();
 
         if (!Auth::check()) {

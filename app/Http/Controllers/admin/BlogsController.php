@@ -68,7 +68,7 @@ class BlogsController extends Controller
         // Handle file upload for feature image
         if ($request->hasFile('file_input') && $request->file('file_input')->isValid()) {
             // Log the upload process
-            \Log::info('Feature image is being uploaded');
+            //\Log::info('Feature image is being uploaded');
 
             $filePath = 'assets/uploads/blogs/';
             $file_input = $request->file('file_input');
@@ -81,7 +81,7 @@ class BlogsController extends Controller
                 //return redirect()->route('admin.Blogs')->with('error', 'Sorry, there was an error uploading your file.');
             }
         } else {
-            \Log::error('Feature image upload failed');
+            //\Log::error('Feature image upload failed');
         }
 
         // Save the new Blog to the database

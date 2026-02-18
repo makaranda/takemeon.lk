@@ -32,7 +32,7 @@
 <section class="login-section d-flex align-items-center mt-5 mb-5">
     <div class="container">
         <div class="row no-gutters shadow-lg rounded overflow-hidden bg-white">
-            <div class="col-12 col-md-12 col-lg-12 {{ $errors->any() ? 'pt-4 pl-4 pr-4' : '' }}">
+            <div class="col-12 col-md-12 col-lg-12 {{ $errors->any() || session('success') ? 'pt-4 pl-4 pr-4' : '' }}">
                 @if ($errors->any())
                     <div>
                         @foreach ($errors->all() as $error)
@@ -117,15 +117,15 @@
                 <form action="{{ route('frontend.userloginform') }}" method="post">
                     @csrf
                     <div class="form-group">
-                        <input type="email"
+                        <input type="text"
                                class="form-control custom-input"
-                               placeholder="Email">
+                               placeholder="Email or Username" name="username">
                     </div>
 
                     <div class="form-group">
                         <input type="password"
                                class="form-control custom-input"
-                               placeholder="Password">
+                               placeholder="Password" name="password">
                     </div>
 
                     <button type="submit"

@@ -10,14 +10,14 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="hero-cap text-center">
-                        <h2>User Register</h2>
+                        <h2>OTP Verify</h2>
                     </div>
                 </div>
                 <div class="col-xl-12">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">User Register</a></li>
+                            <li class="breadcrumb-item"><a href="#">OTP Verify</a></li>
                         </ol>
                     </nav>
                 </div>
@@ -65,7 +65,7 @@
             </div>
             <!-- Left Side -->
             <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-start p-5 login-info">
-                <h3 class="font-weight-bold mb-4">Sign up to takemeon.lk</h3>
+                <h3 class="font-weight-bold mb-4">OTP Verify to takemeon.lk</h3>
                 <p class="text-muted mb-4">
                     To view your ads and account details, please login to your takemeon.lk account.
                 </p>
@@ -114,44 +114,20 @@
                     <p><span class="text-danger">*</span> All Fields are Required</p>
                 </div>
 
-                <form action="{{ route('frontend.userregisterform') }}" method="POST" class="register-form-box">
+                <form action="{{ route('frontend.verifyOtpSubmit') }}" method="POST" class="register-form-box">
                         @csrf
-                    <input type="hidden" placeholder="Enter Address" value="{{ old('address','') }}" name="address" class="form-control custom-input"/>    
+                    <input type="hidden" name="user_id" value="{{ $id }}">
                     <!-- Single Input Fields -->
                     <div class="input-box">
                         <div class="form-group">
-                            <input type="text" placeholder="Enter full name" value="{{ old('full_name') }}" name="full_name" class="form-control custom-input">
-                        </div>
-                        <div class="form-group">
-                            <input type="email" placeholder="Enter email address" value="{{ old('email') }}" name="email" class="form-control custom-input">
-                        </div>
-                        <div class="form-group">
-                            <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number') }}" name="phone_number" class="form-control custom-input">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" placeholder="Enter Username" value="{{ old('username') }}" name="username" class="form-control custom-input">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" placeholder="Enter Password" name="password" class="form-control custom-input">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control custom-input">
+                            <input type="text" placeholder="Enter OTP" value="{{ old('otp') }}" name="otp" class="form-control custom-input">
                         </div>
                     </div>
 
                     <button type="submit"
                             class="btn btn-login btn-block mb-3">
-                        Signup
+                        Verify
                     </button>
-
-                    <hr>
-
-                    <div class="text-center">
-                        <p class="mb-2">Already have an account..?</p>
-                        <a href="{{ route('frontend.userlogin') }}" class="btn head-btn2 px-4">
-                            Login
-                        </a>
-                    </div>
 
                 </form>
             </div>

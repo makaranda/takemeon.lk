@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\frontend\HomeController;
 use App\Http\Controllers\frontend\PaymentController;
 use App\Http\Controllers\frontend\CustomerDashboardController;
+use App\Http\Controllers\frontend\CandidateController;
 
 /** Admin Controllers */
 use App\Http\Controllers\admin\AuthController;
@@ -65,8 +66,9 @@ Route::post('/user-login', [AuthController::class, 'userLoginSubmit'])->name('fr
 Route::get('/user-register', [AuthController::class, 'userRegister'])->name('frontend.userregister');
 Route::post('/user-register', [AuthController::class, 'userRegisterSubmit'])->name('frontend.userregisterform');
 Route::post('/user-reset-password', [AuthController::class, 'userResetPassword'])->name('frontend.userresetpassword');
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('frontend.verifyotp');
-
+Route::post('/verify-otp-form', [AuthController::class, 'verifyOtp'])->name('frontend.verifyotp');
+Route::get('/verify-otp/{id}', [AuthController::class, 'verifyOtpForm'])->name('frontend.verifyOtpForm');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtpSubmit'])->name('frontend.verifyOtpSubmit');
 
 // Frontend Routes
 Route::get('/pay-online', [HomeController::class, 'payOnline'])->name('frontend.payonline');
@@ -170,6 +172,15 @@ Route::middleware(['auth', 'customer'])->group(function () {
         Route::post('/user-profile-update{user_id}', [CustomerDashboardController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
     });
 });
+
+// Candidate Dashboard
+Route::middleware(['auth', 'candidate'])->group(function () {
+    Route::get('/candidate-dashboard', [CandidateController::class, 'index'])->name('candidate.dashboard');
+    Route::prefix('candidate-dashboard')->group(function () {
+        Route::post('/user-profile-update{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
+    });
+});
+
 // Admin Dashboard
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
