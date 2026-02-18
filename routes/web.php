@@ -177,7 +177,8 @@ Route::middleware(['auth', 'customer'])->group(function () {
 Route::middleware(['auth', 'candidate'])->group(function () {
     Route::get('/candidate-dashboard', [CandidateController::class, 'index'])->name('candidate.dashboard');
     Route::prefix('candidate-dashboard')->group(function () {
-        Route::post('/user-profile-update{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
+        Route::post('/user-profile-details-update/{user_id}', [CandidateController::class, 'userProfileDetailsUpdate'])->name('frontend.userprofiledetails.update');
+        Route::post('/user-profile-update/{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
     });
 });
 

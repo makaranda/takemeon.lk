@@ -110,14 +110,9 @@ class CandidateController extends Controller
         return response()->json(['status' => 'error'], 400);
     }
 
-     public function userProfileDetailsUpdate(Request $request, $user_id){
-        //VisitorHelper::updateVisitorCount();
-
-        if (!Auth::check()) {
-            return redirect()->route('frontend.userlogin')->with('error', 'You must be logged in to access this page.');
-        }
-        //dd($user_id);
-        $user = User::where('status',1)->where('id',$user_id)->first();
+    public function userProfileDetailsUpdate(Request $request, $user_id)
+    {
+        $user = User::findOrFail($user_id);
 
         $request->validate([
             'full_name' => 'required|string|max:255',
@@ -128,12 +123,10 @@ class CandidateController extends Controller
             'confirm_password' => 'nullable|string|same:password',
         ]);
 
-        //dd($request->all());
-        // Update fields
         $user->name = $request->full_name;
         $user->email = $request->email;
-        $user->phone = $request->phone_number;
         $user->username = $request->username;
+        $user->phone = $request->phone_number;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
@@ -141,10 +134,11 @@ class CandidateController extends Controller
 
         $user->save();
 
-        $cart = [];
-        return redirect()->back()->with('success', 'Profile updated successfully.');
-        //return view('pages.frontend.customerdashboard.index', compact('cart'));
-        //return redirect()->route('customer.dashboard')->with('success', 'Profile updated successfully.');
-
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile updated successfully!',
+            'data' => $user
+        ]);
     }
+
 }

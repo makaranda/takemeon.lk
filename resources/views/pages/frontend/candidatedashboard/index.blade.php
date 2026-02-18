@@ -174,34 +174,42 @@
                                 <p>Add your personal information here.</p>
                                 <div class="row">
                                     <div class="col-12 col-md-12">
-                                        <form action="{{ route('frontend.userprofile.update',Auth::user()->id) }}" method="POST">
+                                        <form action="{{ route('frontend.userprofiledetails.update',Auth::user()->id) }}" method="POST" id="profileUpdateForm">
                                             @csrf
-                                            <div class="form-group">
+                                            <div class="row">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Full name</label>
                                                 <input type="text" placeholder="Enter full name" value="{{ old('full_name',Auth::user()->name) }}" name="full_name" class="form-control custom-input">
+                                                <small class="text-danger error-text full_name_error"></small>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Email Address</label>
                                                 <input type="email" placeholder="Enter email address" value="{{ old('email',Auth::user()->email) }}" name="email" class="form-control custom-input">
+                                                <small class="text-danger error-text email_error"></small>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Phone</label>
                                                 <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number',Auth::user()->phone) }}" name="phone_number" class="form-control custom-input">
+                                                <small class="text-danger error-text phone_number_error"></small>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Username</label>
                                                 <input type="text" placeholder="Enter Username" value="{{ old('username',Auth::user()->username) }}" name="username" class="form-control custom-input">
+                                                <small class="text-danger error-text username_error"></small>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>New Password</label>
                                                 <input type="password" placeholder="Enter New Password" name="password" class="form-control custom-input">
+                                                <small class="text-danger error-text password_error"></small>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Confirm Password</label>
                                                 <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control custom-input">
+                                                <small class="text-danger error-text confirm_password_error"></small>
                                             </div>
-                                            <div class="form-group text-right">
-                                                <button type="submit" class="btn btn-login btn-block mb-3">Update Profile</button>
+                                            <div class="form-group col-12 col-md-12 text-right mt-3">
+                                                <button type="submit" class="btn btn-login btn-block mb-3" id="updateProfileBtn">Update Profile</button>
+                                            </div>
                                             </div>
                                         </form>
                                     </div>
@@ -294,154 +302,6 @@
                 </div>
             </div>
 
-
-
-            <div class="col-xl-12 col-md-12">
-                <div class="about_info mb-35">
-                    <div class="d-flex align-items-start">
-                        <div class="nav flex-column nav-pills me-3 w-25" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            <button class="nav-link genric-btn rounded-0 primary active" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="true">Profile</button>
-                            <button class="nav-link genric-btn default" id="v-pills-pending-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pending" type="button" role="tab" aria-controls="v-pills-pending" aria-selected="false">Pending Orders</button>
-                            <button class="nav-link genric-btn default" id="v-pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#v-pills-cancel" type="button" role="tab" aria-controls="v-pills-cancel" aria-selected="false">Cancel Orders</button>
-                            <button class="nav-link genric-btn default" id="v-pills-complete-tab" data-bs-toggle="pill" data-bs-target="#v-pills-complete" type="button" role="tab" aria-controls="v-pills-complete" aria-selected="false">Complete Orders</button>
-                        </div>
-
-                        <div class="tab-content w-100 w-75" id="v-pills-tabContent">
-                            <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
-                                <div class="register-form-area w-100 p-0">
-                                    <div class="register-form text-center">
-                                        <div class="input-box pb-0 pt-0">
-                                            <form action="{{ route('frontend.userprofile.update',Auth::user()->id) }}" method="POST">
-                                            @csrf
-                                            <div class="single-input-fields">
-                                                <label>Full name</label>
-                                                <input type="text" placeholder="Enter full name" value="{{ old('full_name',Auth::user()->name) }}" name="full_name">
-                                            </div>
-                                            <div class="single-input-fields">
-                                                <label>Email Address</label>
-                                                <input type="email" placeholder="Enter email address" value="{{ old('email',Auth::user()->email) }}" name="email">
-                                            </div>
-                                            <div class="single-input-fields">
-                                                <label>Phone</label>
-                                                <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number',Auth::user()->phone) }}" name="phone_number">
-                                            </div>
-                                            <div class="single-input-fields">
-                                                <label>Username</label>
-                                                <input type="text" placeholder="Enter Username" value="{{ old('username',Auth::user()->username) }}" name="username">
-                                            </div>
-                                            <div class="single-input-fields">
-                                                <label>New Password</label>
-                                                <input type="password" placeholder="Enter New Password" name="password">
-                                            </div>
-                                            <div class="single-input-fields">
-                                                <label>Confirm Password</label>
-                                                <input type="password" placeholder="Confirm Password" name="confirm_password">
-                                            </div>
-                                            <div class="single-input-fields text-right">
-                                                <button type="submit" class="submit-btn3">Update Profile</button>
-                                            </div>
-                                        </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-pending" role="tabpanel" aria-labelledby="v-pills-pending-tab" tabindex="0">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="pendingTable">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Order ID</th>
-                                                <th>Qty</th>
-                                                <th>Total</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($pending_orders as $index => $order)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $order->order_id }}</td>
-                                                    <td>{{ $order->qty }}</td>
-                                                    <td>{{ $order->total }}</td>
-                                                    <td>{{ ucfirst($order->status) }}</td>
-                                                </tr>
-                                            @empty
-                                                <tr><td colspan="5">No pending orders.</td></tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-                            <div class="tab-pane fade" id="v-pills-cancel" role="tabpanel" aria-labelledby="v-pills-cancel-tab" tabindex="0">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="cancelTable">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Order ID</th>
-                                                <th>Qty</th>
-                                                <th>Total</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($cancel_orders as $index => $order)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $order->order_id }}</td>
-                                                    <td>{{ $order->qty }}</td>
-                                                    <td>{{ $order->total }}</td>
-                                                    <td>{{ ucfirst($order->status) }}</td>
-                                                </tr>
-                                            @empty
-                                                <tr><td colspan="5">No cancelled orders.</td></tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-                            <div class="tab-pane fade" id="v-pills-complete" role="tabpanel" aria-labelledby="v-pills-complete-tab" tabindex="0">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="completeTable">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Order ID</th>
-                                                <th>Qty</th>
-                                                <th>Total</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($complete_orders as $index => $order)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $order->order_id }}</td>
-                                                    <td>{{ $order->qty }}</td>
-                                                    <td>{{ $order->total }}</td>
-                                                    <td>{{ ucfirst($order->status) }}</td>
-                                                </tr>
-                                            @empty
-                                                <tr><td colspan="5">No completed orders.</td></tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
         </div>
     </div>
 </section>    
@@ -644,6 +504,73 @@
                     }
                 });
 
+            });
+
+            $('#updateProfileBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#profileUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updateProfileBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updateProfileBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="full_name"]').val(response.data.name);
+                        $('input[name="email"]').val(response.data.email);
+                        $('input[name="username"]').val(response.data.username);
+                        $('input[name="phone_number"]').val(response.data.phone);
+
+                        // Clear password fields
+                        $('input[name="password"]').val('');
+                        $('input[name="confirm_password"]').val('');
+                    },
+                    error: function (xhr) {
+
+                        $('#updateProfileBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
             });
             // Init cancelTable and completeTable if present and visible
             if ($('#cancelTable').length && $('#cancelTable').is(':visible')) {

@@ -113,15 +113,16 @@ class AuthController extends Controller
             if (Auth::user()->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }elseif (Auth::user()->role === 'candidate') {
-                echo 'test 1'.Auth::user()->role;
+                //echo 'test 1'.Auth::user()->role;
                 return redirect()->route('candidate.dashboard');
-            }else{
-                //echo 'test 2';
-                //return redirect()->route('candidate.dashboard');
             }
+            //else{
+                //echo 'test 2';
+                //return redirect()->route('frontend.userlogin');
+            //}
         }
 
-        //return back()->withErrors(['username' => 'Invalid Credentials']);
+        return back()->withErrors(['username' => 'Invalid Credentials']);
     }
 
     public function userRegister()
