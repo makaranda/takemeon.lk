@@ -29,6 +29,8 @@ class User extends Authenticatable
         'otp',
         'otp_expires_at',
         'password',
+        'profile_img',
+        'active',
     ];
 
     /**
@@ -50,4 +52,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function socialLinks()
+    {
+        return $this->hasOne(UserSocialLink::class);
+    }
+
+    public function expectingArea()
+    {
+        return $this->hasOne(UserExpectingArea::class);
+    }
 }

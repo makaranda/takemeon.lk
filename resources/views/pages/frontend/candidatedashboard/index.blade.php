@@ -104,10 +104,10 @@
 
             <div class="col-xl-12 col-md-12">
                 <div class="candidate_info mb-35 pl-5 pr-5 pb-5 pt-3">
-                    <div class="d-flex align-items-start">
+                    <div class="row d-flex align-items-start">
 
                         <!-- LEFT SIDE NAV -->
-                        <div class="nav flex-column nav-pills mr-3 w-25" 
+                        <div class="col-12 col-md-3 nav flex-column nav-pills" 
                             id="v-pills-tab" 
                             role="tablist" 
                             aria-orientation="vertical">
@@ -163,7 +163,7 @@
                         </div>
 
                         <!-- RIGHT SIDE CONTENT -->
-                        <div class="tab-content w-75" id="v-pills-tabContent">
+                        <div class="col-12 col-md-9 tab-content" id="v-pills-tabContent">
 
                             <!-- PERSONAL DETAILS -->
                             <div class="tab-pane fade show active"
@@ -207,13 +207,30 @@
                                                 <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control custom-input">
                                                 <small class="text-danger error-text confirm_password_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-12 text-right mt-3">
-                                                <button type="submit" class="btn btn-login btn-block mb-3" id="updateProfileBtn">Update Profile</button>
                                             </div>
-                                            </div>
-                                        </form>
                                     </div>
                                 </div>
+
+                                <h4 class="mb-3">Social Links</h4>
+                                <p>Add your Social Links to here.</p>
+
+                                <div class="row">
+                                    <div class="form-group col-12 col-md-6">
+                                        <label>Facebook Link</label>
+                                        <input type="text" placeholder="Enter Facebook Link" value="{{ old('facebook_link',optional($user->socialLinks)->facebook_link) }}" name="facebook_link" class="form-control custom-input">
+                                        <small class="text-danger error-text facebook_link_error"></small>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6">
+                                        <label>LinkedIn Link</label>
+                                        <input type="text" placeholder="Enter LinkedIn Link" value="{{ old('linkedin_link',optional($user->socialLinks)->linkedin_link) }}" name="linkedin_link" class="form-control custom-input">
+                                        <small class="text-danger error-text linkedin_link_error"></small>
+                                    </div>
+                                    <div class="form-group col-12 col-md-12 text-right mt-3">
+                                        <button type="submit" class="btn btn-login btn-block mb-3" id="updateProfileBtn">Update Profile</button>
+                                    </div>
+                                        </form>
+                                </div>
+
                             </div>
 
 
@@ -226,7 +243,34 @@
                                 <p>Add your preferred job locations and salary expectations.</p>
                                 <div class="row">
                                     <div class="col-12 col-md-12">
-                                        aaaaaaaa
+                                        <div class="row">
+                                            <div class="col-12 col-md-12">
+                                                <form action="{{ route('frontend.userexpectingdetails.update',Auth::user()->id) }}" method="POST" id="profileUpdateForm">
+                                                    @csrf
+                                                    <div class="row">
+                                                    <div class="form-group col-12 col-md-6">
+                                                        <label>Job Industry</label>
+                                                        <input type="text" placeholder="Enter Job Industry" value="{{ old('job_industry',Auth::user()->name) }}" name="job_industry" class="form-control custom-input">
+                                                        <small class="text-danger error-text job_industry_error"></small>
+                                                    </div>
+                                                    <div class="form-group col-12 col-md-6">
+                                                        <label>Job Type</label>
+                                                        <input type="text" placeholder="Enter Job Type" value="{{ old('job_type',Auth::user()->email) }}" name="job_type" class="form-control custom-input">
+                                                        <small class="text-danger error-text job_type_error"></small>
+                                                    </div>
+                                                    <div class="form-group col-12 col-md-6">
+                                                        <label>Job Role</label>
+                                                        <input type="text" placeholder="Enter Job Role" value="{{ old('job_role',Auth::user()->phone) }}" name="job_role" class="form-control custom-input">
+                                                        <small class="text-danger error-text job_role_error"></small>
+                                                    </div>
+                                                    <div class="form-group col-12 col-md-6">
+                                                        <label>Designation</label>
+                                                        <input type="text" placeholder="Enter designation" value="{{ old('designation',Auth::user()->username) }}" name="designation" class="form-control custom-input">
+                                                        <small class="text-danger error-text username_error"></small>
+                                                    </div>
+                                                    </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -314,6 +358,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 
     <style>
+        #v-pills-tabContent {
+            border-top: 1px solid #ad8bb7;
+            padding-top: 14px;
+        }
         .profile-wrapper {
             position: relative;
             display: inline-block;
@@ -353,6 +401,9 @@
             .nav{
                 .nav-link{
                     color: #635c5c;
+                    &:hover{
+                        background-color: #d3a7e0;
+                    }
                 }
                 .nav-link.active{
                     color: #ffffff;

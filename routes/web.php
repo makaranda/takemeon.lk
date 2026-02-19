@@ -179,6 +179,8 @@ Route::middleware(['auth', 'candidate'])->group(function () {
     Route::prefix('candidate-dashboard')->group(function () {
         Route::post('/user-profile-details-update/{user_id}', [CandidateController::class, 'userProfileDetailsUpdate'])->name('frontend.userprofiledetails.update');
         Route::post('/user-profile-update/{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
+        Route::post('/user-profile-expecting-update/{user_id}', [CandidateController::class, 'userProfileExpectingUpdate'])->name('frontend.userexpectingdetails.update');
+    
     });
 });
 
@@ -291,7 +293,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::prefix('customers')->group(function () {
             Route::get('/', [CustomersController::class, 'index'])->name('admin.customers');  // Show users list
             Route::get('/edit/{id}', [CustomersController::class, 'edit'])->name('admin.editcustomer');  // Edit user
-            Route::delete('/delete/{id}', [UserCoCustomersControllerntroller::class, 'delete'])->name('admin.deletecustomer');  // Delete user
+            //Route::delete('/delete/{id}', [UserCoCustomersControllerntroller::class, 'delete'])->name('admin.deletecustomer');  // Delete user
             Route::get('/add', [CustomersController::class, 'add'])->name('admin.addcustomer');  // Add user form
             Route::post('/update/{id}', [CustomersController::class, 'update'])->name('admin.updatecustomer');
             Route::post('/save', [CustomersController::class, 'save'])->name('admin.savecustomer');

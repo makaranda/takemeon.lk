@@ -45,15 +45,19 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Models\UserSocialLink;
 
 class CandidateController extends Controller
 {
     public function index()
     {
         VisitorHelper::updateVisitorCount();
-        $user = Auth::user();
+        //$user = Auth::user();
+        //$user = Auth::user()->load(['socialLinks', 'expectingArea']);
+        $user = User::with(['socialLinks', 'expectingArea'])->find(Auth::id());
         if (!$user) {
-            return redirect()->route('frontend.userlogin')->with('error', 'You must be logged in to access this page.');
+            return redirect()->route('frontend.userlogin')
+                ->with('error', 'You must be logged in to access this page.');
         }
         $main_slider = MainSlider::where('status',1)->get(); // Assuming there's only one main slider
         //$music_tracks = MusicTrack::where('status', 1)->where('type','audio')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(7)->get();
@@ -77,7 +81,7 @@ class CandidateController extends Controller
         // if (!empty($admin->role) && $admin->role > 0) {
         //     return redirect()->route('admin.dashboard');
         // } else {
-            return view('pages.frontend.candidatedashboard.index',compact('gallery_home','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders'));
+            return view('pages.frontend.candidatedashboard.index',compact('gallery_home','user','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders'));
         //}
     }
 
@@ -121,24 +125,95 @@ class CandidateController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'password' => 'nullable|string|min:6',
             'confirm_password' => 'nullable|string|same:password',
+
+            'facebook_link' => 'nullable|url',
+            'linkedin_link' => 'nullable|url',
         ]);
 
-        $user->name = $request->full_name;
-        $user->email = $request->email;
-        $user->username = $request->username;
-        $user->phone = $request->phone_number;
+        DB::beginTransaction();
+        try {
+            $user->name = $request->full_name;
+            $user->email = $request->email;
+            $user->username = $request->username;
+            $user->phone = $request->phone_number;
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            UserSocialLink::updateOrCreate(
+    ['user_id' => $user->id],
+                [
+                    'facebook_link'   => $request->facebook_link ?: null,
+                    'linkedin_link'   => $request->linkedin_link ?: null,
+                    'github_link'     => $request->github_link ?: null,
+                    'instagrame_link' => $request->instagrame_link ?: null,
+                    'twitter_link'    => $request->twitter_link ?: null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile updated successfully!',
+                'data' => $user
+            ]);
+            
+        }catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!'
+            ], 500);
+        }    
+
+
+    }
+
+    public function userProfileExpectingUpdate(Request $request, $user_id){
+        
+        $user = User::findOrFail($user_id);
+        
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone_number' => 'required|string|max:20',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            'confirm_password' => 'nullable|string|same:password',
+
+            'facebook_link' => 'nullable|url',
+            'linkedin_link' => 'nullable|url',
+        ]);
+
+        try {
+            $user->name = $request->full_name;
+            $user->email = $request->email;
+            $user->username = $request->username;
+            $user->phone = $request->phone_number;
+
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile updated successfully!',
+                'data' => $user
+            ]);
+            
+        }catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!'
+            ], 500);
         }
-
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Profile updated successfully!',
-            'data' => $user
-        ]);
     }
 
 }
