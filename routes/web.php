@@ -180,6 +180,13 @@ Route::middleware(['auth', 'candidate'])->group(function () {
         Route::post('/user-profile-details-update/{user_id}', [CandidateController::class, 'userProfileDetailsUpdate'])->name('frontend.userprofiledetails.update');
         Route::post('/user-profile-update/{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
         Route::post('/user-profile-expecting-update/{user_id}', [CandidateController::class, 'userProfileExpectingUpdate'])->name('frontend.userexpectingdetails.update');
+        Route::post('/user-education-update/{user_id}', [CandidateController::class, 'userEducationUpdate'])->name('frontend.usereducation.update');
+        Route::post('/user-school-level-update/{user_id}', [CandidateController::class, 'userSchoolLevelUpdate'])->name('frontend.userschoollevel.update');
+        Route::post('/user-professional-update/{user_id}', [CandidateController::class, 'userProfessionalUpdate'])->name('frontend.userprofessional.update');
+        Route::post('/user-past-employment-update/{user_id}', [CandidateController::class, 'updatePastEmploymentUpdate'])->name('frontend.userpastemployment.update');
+        Route::post('/fetch-past-employment/{user_id}',  [CandidateController::class, 'fetchPastEmployement'])->name('frontend.fetchpastemployement');
+        Route::post('/details-past-employment/{user_id}',  [CandidateController::class, 'detailsPastEmployement'])->name('frontend.detailspastemployement');
+        Route::post('/check-past-employment/{user_id}',  [CandidateController::class, 'checkPastEmployement'])->name('frontend.checkpastemployement');
     
     });
 });

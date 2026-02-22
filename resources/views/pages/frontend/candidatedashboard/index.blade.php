@@ -188,6 +188,35 @@
                                                 <small class="text-danger error-text email_error"></small>
                                             </div>
                                             <div class="form-group col-12 col-md-6">
+                                                <label>DOB</label>
+                                                <div class="input-group">
+                                                    <input type="text"
+                                                        name="dob"
+                                                        id="dob"
+                                                        class="form-control custom-input"
+                                                        value="{{ old('dob', Auth::user()->dob) }}"
+                                                        placeholder="Select DOB"
+                                                        autocomplete="off">
+
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text bg-white">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <small class="text-danger error-text dob_error"></small>
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>NIC</label>
+                                                <input type="text" placeholder="Enter NIC" value="{{ old('nic',Auth::user()->nic) }}" id="nic"  name="nic" class="form-control custom-input">
+                                                <small class="text-danger error-text nic_error"></small>
+                                            </div>
+                                            <div class="form-group col-12 col-md-12">
+                                                <label>Address</label>
+                                                <input type="text" placeholder="Enter Address" value="{{ old('address',Auth::user()->address) }}" name="address" class="form-control custom-input">
+                                                <small class="text-danger error-text address_error"></small>
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Phone</label>
                                                 <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number',Auth::user()->phone) }}" name="phone_number" class="form-control custom-input">
                                                 <small class="text-danger error-text phone_number_error"></small>
@@ -245,30 +274,34 @@
                                     <div class="col-12 col-md-12">
                                         <div class="row">
                                             <div class="col-12 col-md-12">
-                                                <form action="{{ route('frontend.userexpectingdetails.update',Auth::user()->id) }}" method="POST" id="profileUpdateForm">
+                                                <form action="{{ route('frontend.userexpectingdetails.update',Auth::user()->id) }}" method="POST" id="expectingUpdateForm">
                                                     @csrf
                                                     <div class="row">
-                                                    <div class="form-group col-12 col-md-6">
-                                                        <label>Job Industry</label>
-                                                        <input type="text" placeholder="Enter Job Industry" value="{{ old('job_industry',Auth::user()->name) }}" name="job_industry" class="form-control custom-input">
-                                                        <small class="text-danger error-text job_industry_error"></small>
-                                                    </div>
-                                                    <div class="form-group col-12 col-md-6">
-                                                        <label>Job Type</label>
-                                                        <input type="text" placeholder="Enter Job Type" value="{{ old('job_type',Auth::user()->email) }}" name="job_type" class="form-control custom-input">
-                                                        <small class="text-danger error-text job_type_error"></small>
-                                                    </div>
-                                                    <div class="form-group col-12 col-md-6">
-                                                        <label>Job Role</label>
-                                                        <input type="text" placeholder="Enter Job Role" value="{{ old('job_role',Auth::user()->phone) }}" name="job_role" class="form-control custom-input">
-                                                        <small class="text-danger error-text job_role_error"></small>
-                                                    </div>
-                                                    <div class="form-group col-12 col-md-6">
-                                                        <label>Designation</label>
-                                                        <input type="text" placeholder="Enter designation" value="{{ old('designation',Auth::user()->username) }}" name="designation" class="form-control custom-input">
-                                                        <small class="text-danger error-text username_error"></small>
-                                                    </div>
-                                                    </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Job Industry</label>
+                                                            <input type="text" placeholder="Enter Job Industry" value="{{ old('job_industry',optional($user->expectingArea)->job_industry) }}" name="job_industry" class="form-control custom-input">
+                                                            <small class="text-danger error-text job_industry_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Job Type</label>
+                                                            <input type="text" placeholder="Enter Job Type" value="{{ old('job_type',optional($user->expectingArea)->job_type) }}" name="job_type" class="form-control custom-input">
+                                                            <small class="text-danger error-text job_type_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Job Role</label>
+                                                            <input type="text" placeholder="Enter Job Role" value="{{ old('job_role',optional($user->expectingArea)->job_role) }}" name="job_role" class="form-control custom-input">
+                                                            <small class="text-danger error-text job_role_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Designation</label>
+                                                            <input type="text" placeholder="Enter designation" value="{{ old('designation',optional($user->expectingArea)->designation) }}" name="designation" class="form-control custom-input">
+                                                            <small class="text-danger error-text username_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-12 text-right mt-3">
+                                                            <button type="submit" class="btn btn-login btn-block mb-3" id="updateExpectingBtn">Update Now</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -286,7 +319,33 @@
                                 <p>Add university or diploma information.</p>
                                 <div class="row">
                                     <div class="col-12 col-md-12">
-                                        aaaaaaaa
+                                        <div class="row">
+                                            <div class="col-12 col-md-12">
+                                                <form action="{{ route('frontend.usereducation.update',Auth::user()->id) }}" method="POST" id="educationUpdateForm">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Highest Education Level</label>
+                                                            <input type="text" placeholder="Enter Job Industry" value="{{ old('highest_education_level',optional($user->UserEducation)->highest_education_level) }}" name="highest_education_level" class="form-control custom-input">
+                                                            <small class="text-danger error-text highest_education_level_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Educational Specialization</label>
+                                                            <input type="text" placeholder="Enter Job Type" value="{{ old('educational_specialization',optional($user->UserEducation)->educational_specialization) }}" name="educational_specialization" class="form-control custom-input">
+                                                            <small class="text-danger error-text educational_specialization_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Institute / University</label>
+                                                            <input type="text" placeholder="Enter Job Role" value="{{ old('institute_university',optional($user->UserEducation)->institute_university) }}" name="institute_university" class="form-control custom-input">
+                                                            <small class="text-danger error-text institute_university_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-12 text-right mt-3">
+                                                            <button type="submit" class="btn btn-login btn-block mb-3" id="updateEducationBtn">Update Now</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -302,7 +361,68 @@
                                 <p>Add O/L, A/L or other school details.</p>
                                 <div class="row">
                                     <div class="col-12 col-md-12">
-                                        aaaaaaaa
+                                        <div class="row">
+                                            <div class="col-12 col-md-12">
+                                                <form action="{{ route('frontend.userschoollevel.update',Auth::user()->id) }}" method="POST" id="schoolUpdateForm">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>O/L School</label>
+                                                            <input type="text" placeholder="Enter O/L School" value="{{ old('ol_school',optional($user->schoolLevel)->ol_school) }}" name="ol_school" class="form-control custom-input">
+                                                            <small class="text-danger error-text ol_school_error"></small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>O/L Year</label>
+                                                            <div class="input-group">
+                                                                <input type="text"
+                                                                    name="ol_year"
+                                                                    id="ol_year"
+                                                                    class="form-control custom-input"
+                                                                    value="{{ old('ol_year', optional($user->schoolLevel)->ol_year) }}"
+                                                                    placeholder="Select O/L Year"
+                                                                    autocomplete="off">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text bg-white">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-danger error-text ol_year_error"></small>
+                                                        </div>
+
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>A/L School</label>
+                                                            <input type="text" placeholder="Enter A/L School" value="{{ old('al_school',optional($user->schoolLevel)->al_school) }}" name="al_school" class="form-control custom-input">
+                                                            <small class="text-danger error-text al_school_error"></small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>A/L Year</label>
+                                                            <div class="input-group">
+                                                                <input type="text"
+                                                                    name="al_year"
+                                                                    id="al_year"
+                                                                    class="form-control custom-input"
+                                                                    value="{{ old('al_year', optional($user->schoolLevel)->al_year) }}"
+                                                                    placeholder="Select A/L Year"
+                                                                    autocomplete="off">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text bg-white">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-danger error-text al_year_error"></small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group col-12 col-md-12 text-right mt-3">
+                                                            <button type="submit" class="btn btn-login btn-block mb-3" id="updateSchoolBtn">Update Now</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -318,7 +438,89 @@
                                 <p>Add skills, certifications and experience summary.</p>
                                 <div class="row">
                                     <div class="col-12 col-md-12">
-                                        aaaaaaaa
+                                        <div class="row">
+                                            <div class="col-12 col-md-12">
+                                                <form action="{{ route('frontend.userprofessional.update',Auth::user()->id) }}" method="POST" id="professionalUpdateForm">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Total Years Experience</label>
+                                                            <input type="number" placeholder="Enter Total Years Experience" value="{{ old('total_years_experience',optional($user->professionalDetail)->total_years_experience) }}" name="total_years_experience" class="form-control custom-input">
+                                                            <small class="text-danger error-text total_years_experience_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Skills Summary</label>
+                                                            <input type="text" placeholder="Enter Skills Summary" value="{{ old('skills_summary',optional($user->professionalDetail)->skills_summary) }}" name="skills_summary" class="form-control custom-input">
+                                                            <small class="text-danger error-text skills_summary_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-12">
+                                                            <label>About yourself</label>
+                                                            <textarea rows="4" placeholder="Enter About yourself"  name="about_yourself" class="form-control custom-input">{{ old('about_yourself',optional($user->professionalDetail)->about_yourself) }}</textarea>
+                                                            <small class="text-danger error-text about_yourself_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Current Employer</label>
+                                                            <input type="text" placeholder="Enter Current Employer" value="{{ old('current_employer',optional($user->professionalDetail)->current_employer) }}" name="current_employer" class="form-control custom-input">
+                                                            <small class="text-danger error-text current_employer_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Current Industry</label>
+                                                            <input type="text" placeholder="Enter Current Industry" value="{{ old('current_industry',optional($user->professionalDetail)->current_industry) }}" name="current_industry" class="form-control custom-input">
+                                                            <small class="text-danger error-text current_industry_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Current Business Function</label>
+                                                            <input type="text" placeholder="Enter Current Business Function" value="{{ old('current_business_function',optional($user->professionalDetail)->current_business_function) }}" name="current_business_function" class="form-control custom-input">
+                                                            <small class="text-danger error-text current_business_function_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Role / Designation</label>
+                                                            <input type="text" placeholder="Enter Designation" value="{{ old('designation',optional($user->professionalDetail)->designation) }}" name="designation" class="form-control custom-input">
+                                                            <small class="text-danger error-text designation_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Started in</label>
+
+                                                            <div class="input-group">
+                                                                <input type="text"
+                                                                    name="started_in"
+                                                                    id="started_in"
+                                                                    class="form-control custom-input"
+                                                                    value="{{ old('started_in', optional($user->professionalDetail)->started_in) }}"
+                                                                    placeholder="Select start date"
+                                                                    autocomplete="off">
+
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text bg-white">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            <small class="text-danger error-text started_in_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Notice period (in days)</label>
+                                                            <input type="text" placeholder="Enter Notice period (in days)" value="{{ old('notice_period_days',optional($user->professionalDetail)->notice_period_days) }}" name="notice_period_days" class="form-control custom-input">
+                                                            <small class="text-danger error-text notice_period_days_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-12">
+                                                            <label>About the current role</label>
+                                                            <textarea rows="4" placeholder="Enter About the current role"  name="about_current_role" class="form-control custom-input">{{ old('about_current_role',optional($user->professionalDetail)->about_current_role) }}</textarea>
+                                                            <small class="text-danger error-text about_current_role_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-6">
+                                                            <label>Current salary (per month) (Rs)</label>
+                                                            <input type="number" placeholder="Enter Current salary (per month) (Rs)" value="{{ old('current_salary',optional($user->professionalDetail)->current_salary) }}" name="current_salary" class="form-control custom-input">
+                                                            <small class="text-danger error-text current_salary_error"></small>
+                                                        </div>
+                                                        <div class="form-group col-12 col-md-12 text-right mt-3">
+                                                            <button type="submit" class="btn btn-login btn-block mb-3" id="updateProfessionalBtn">Update Now</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -329,12 +531,22 @@
                             <div class="tab-pane fade"
                                 id="employment"
                                 role="tabpanel">
-
-                                <h4 class="mb-3">Past Employments</h4>
-                                <p>Add previous job history here.</p>
                                 <div class="row">
-                                    <div class="col-12 col-md-12">
-                                        aaaaaaaa
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-6">
+                                        <h4 class="mb-3">Past Employments</h4>
+                                        <p>Add previous job history here.</p>
+                                    </div>
+                                    <div class="col-12 col-md-6 align-content-center text-center">
+                                        <button type="button" class="add_past_employment cursor-pointer" data-id="{{ Auth::user()->id }}"><i class="fa fa-plus-circle"></i> Add past employment</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 col-md-12" id="fetch_past_employment">
+                                        
                                     </div>
                                 </div>
 
@@ -361,6 +573,41 @@
         #v-pills-tabContent {
             border-top: 1px solid #ad8bb7;
             padding-top: 14px;
+        }
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            height: 35px;
+        }
+        .add_past_employment{
+            color:#421c4e;
+            border: none;
+            background: #fff;
+            &:hover{
+                color:#8f50a2;
+                border: none;
+                background: #fff;
+            }
+        }
+        .past_emp_details{
+            .past_emp_row{
+                padding:8px;
+                box-shadow:0px 3px 10px 2px #ddd;
+                &:hover{
+                   box-shadow:0px 3px 15px 5px #ddd; 
+                }
+                .head-text-past-emp {
+                    color: #707676;
+                }
+                .sub-text-past-emp {
+                    color: #afb7ad;
+                }
+                .right-arrow i {
+                    color: #afb7ad;
+                    font-size: 35px;
+                }
+            }
         }
         .profile-wrapper {
             position: relative;
@@ -557,6 +804,7 @@
 
             });
 
+
             $('#updateProfileBtn').on('click', function (e) {
                 e.preventDefault();
 
@@ -591,6 +839,9 @@
                         // Update values dynamically
                         $('input[name="full_name"]').val(response.data.name);
                         $('input[name="email"]').val(response.data.email);
+                        $('input[name="address"]').val(response.data.address);
+                        $('input[name="dob"]').val(response.data.dob);
+                        $('input[name="nic"]').val(response.data.nic);
                         $('input[name="username"]').val(response.data.username);
                         $('input[name="phone_number"]').val(response.data.phone);
 
@@ -623,6 +874,498 @@
                     }
                 });
             });
+
+            $('#dob').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                endDate: new Date(), // prevent future dates
+                todayHighlight: true
+            });
+            // Click icon to open
+            $('#dob').siblings('.input-group-append').click(function () {
+                $('#dob').datepicker('show');
+            });
+        
+
+            $('#updateExpectingBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#expectingUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updateExpectingBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updateExpectingBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="job_industry"]').val(response.data.job_industry);
+                        $('input[name="job_type"]').val(response.data.job_type);
+                        $('input[name="job_role"]').val(response.data.job_role);
+                        $('input[name="designation"]').val(response.data.designation);
+
+                    },
+                    error: function (xhr) {
+
+                        $('#updateExpectingBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#updateEducationBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#educationUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updateEducationBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updateEducationBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="highest_education_level"]').val(response.data.highest_education_level);
+                        $('input[name="educational_specialization"]').val(response.data.educational_specialization);
+                        $('input[name="institute_university"]').val(response.data.institute_university);
+
+                    },
+                    error: function (xhr) {
+
+                        $('#updateEducationBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#updateSchoolBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#schoolUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updateSchoolBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updateSchoolBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="al_school"]').val(response.data.al_school);
+                        $('input[name="educational_specialization"]').val(response.data.al_year);
+                        $('input[name="ol_school"]').val(response.data.ol_school);
+                        $('input[name="ol_year"]').val(response.data.ol_year);
+
+                    },
+                    error: function (xhr) {
+
+                        $('#updateSchoolBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#ol_year').datepicker({
+                format: "yyyy",
+                viewMode: "years",
+                minViewMode: "years",
+                autoclose: true,
+                endDate: new Date() // prevent future years
+            });
+
+            // Click icon to open
+            $('#ol_year').siblings('.input-group-append').click(function () {
+                $('#ol_year').datepicker('show');
+            });
+
+            // Click icon to open
+            $('#al_year').siblings('.input-group-append').click(function () {
+                $('#al_year').datepicker('show');
+            });
+
+            $('#al_year').datepicker({
+                format: "yyyy",
+                viewMode: "years",
+                minViewMode: "years",
+                autoclose: true,
+                endDate: new Date() // prevent future years
+            });
+
+            // Click icon to open
+            $('#al_year').siblings('.input-group-append').click(function () {
+                $('#al_year').datepicker('show');
+            });
+
+            $('#updateProfessionalBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#professionalUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updateProfessionalBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updateProfessionalBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="total_years_experience"]').val(response.data.total_years_experience);
+                        $('input[name="skills_summary"]').val(response.data.skills_summary);
+                        $('textarea[name="about_yourself"]').val(response.data.about_yourself);
+                        $('input[name="current_employer"]').val(response.data.current_employer);
+                        $('input[name="current_industry"]').val(response.data.current_industry);
+                        $('input[name="current_business_function"]').val(response.data.current_business_function);
+                        $('input[name="designation"]').val(response.data.designation);
+                        $('input[name="started_in"]').val(response.data.started_in);
+                        $('input[name="notice_period_days"]').val(response.data.notice_period_days);
+                        $('textarea[name="about_current_role"]').val(response.data.about_current_role);
+                        $('input[name="current_salary"]').val(response.data.current_salary);
+
+                    },
+                    error: function (xhr) {
+
+                        $('#updateProfessionalBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#started_in').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                endDate: new Date(), // prevent future dates
+                todayHighlight: true
+            });
+
+            // Click icon to open
+            $('#started_in').siblings('.input-group-append').click(function () {
+                $('#started_in').datepicker('show');
+            });
+
+
+            $('#updatePastEmpBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#pastEmpUpdateForm');
+                let url = form.attr('action');
+                let formData = form.serialize();
+
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#updatePastEmpBtn').prop('disabled', true);
+                    },
+                    success: function (response) {
+
+                        $('#updatePastEmpBtn').prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                        // Update values dynamically
+                        $('input[name="total_years_experience"]').val(response.data.total_years_experience);
+                        $('input[name="skills_summary"]').val(response.data.skills_summary);
+                        $('textarea[name="about_yourself"]').val(response.data.about_yourself);
+                        $('input[name="current_employer"]').val(response.data.current_employer);
+                        $('input[name="current_industry"]').val(response.data.current_industry);
+                        $('input[name="current_business_function"]').val(response.data.current_business_function);
+                        $('input[name="designation"]').val(response.data.designation);
+                        $('input[name="started_in"]').val(response.data.started_in);
+                        $('input[name="notice_period_days"]').val(response.data.notice_period_days);
+                        $('textarea[name="about_current_role"]').val(response.data.about_current_role);
+                        $('input[name="current_salary"]').val(response.data.current_salary);
+
+                    },
+                    error: function (xhr) {
+
+                        $('#updatePastEmpBtn').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#started_date').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                endDate: new Date(), // prevent future dates
+                todayHighlight: true
+            });
+
+            // Click icon to open
+            $('#started_date').siblings('.input-group-append').click(function () {
+                $('#started_date').datepicker('show');
+            });
+
+            $('#resigned_date').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                endDate: new Date(), // prevent future dates
+                todayHighlight: true
+            });
+
+             $(document).on('click', '#employment-tab', function () {
+                fetchPastEmployement();
+            });
+            
+
+            fetchPastEmployement();
+
+            function fetchPastEmployement(user_id = '{{ Auth::id() }}') {
+
+                $.ajax({
+                    url: '{{ route("frontend.fetchpastemployement", Auth::id()) }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+
+                        if (response.status) {
+
+                            let html = '';
+
+                            if (response.data.length === 0) {
+                                html = '<p class="text-muted">No past employment found</p>';
+                            } else {
+
+                                response.data.forEach(function(item) {
+
+                                    let startDate = formatDate(item.start_date);
+                                    let endDate   = item.end_date ? formatDate(item.end_date) : 'Present';
+
+                                    html += `
+                                    <div class="past_emp_details cursor-pointer" data-id="${item.id}" data-userid="${item.user_id}">
+                                        <div class="row mb-2 past_emp_row">
+                                            <div class="col-md-10 col-6">
+                                                <div class="form-group row">
+                                                    <span class="col-md-12 mb-0 head-text-past-emp">
+                                                        <b>${item.company_name}</b>
+                                                    </span>
+                                                    <div class="col-md-6">
+                                                        <span class="add-emp-history sub-text-past-emp">
+                                                            ${startDate} to ${endDate}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-6 right-arrow align-content-center">
+                                                <i class="fa fa-angle-right"></i> 
+                                            </div>
+                                        </div>
+                                    </div>`;
+                                });
+
+                            }
+
+                            $('#fetch_past_employment').html(html);
+
+                        }
+
+                    },
+                    error: function (xhr) {
+                        console.log(xhr.responseJSON?.message || 'Something went wrong!');
+                    }
+                });
+
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '';
+
+                const date = new Date(dateString);
+
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = date.toLocaleString('en-US', { month: 'short' });
+                const year = date.getFullYear();
+
+                return `${day}-${month}, ${year}`;
+            }
+
+            // Click icon to open
+            $('#resigned_date').siblings('.input-group-append').click(function () {
+                $('#resigned_date').datepicker('show');
+            });
+
             // Init cancelTable and completeTable if present and visible
             if ($('#cancelTable').length && $('#cancelTable').is(':visible')) {
                 $('#cancelTable').DataTable();
@@ -658,7 +1401,206 @@
 
     </script>
     <script>
-        $(document).ready(function() {
+        
+            $(document).on('click', '.past_emp_details', function () {   
+                var user_id = $(this).data('userid'); 
+                var emp_id = $(this).data('id');
+                $.ajax({
+                    url: '{{ route("frontend.detailspastemployement", Auth::id()) }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        emp_id: emp_id,
+                        user_id: user_id
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            let html = '';
+                            if (response.data.length === 0) {
+                                html = '<p class="text-muted">No past employment Details found</p>';
+                            } else {
+
+                                    let data = response.data;
+                                    let startDate = formatDate(data.start_date);
+                                    let endDate   = data.end_date ? formatDate(data.end_date) : 'Present';
+
+                                    html += `
+                                    <div class="row">
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-12 col-md-12">
+                                                    <b>${data.company_name ?? ''}</b>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    ${startDate} to ${endDate}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group row">
+                                                <div class="col-12 col-md-12">
+                                                    <b>Industry</b>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    ${data.industry ?? '-'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group row">
+                                                <div class="col-12 col-md-12">
+                                                    <b>Business Function</b>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    ${data.employee_category	 ?? ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-12 col-md-12">
+                                                    <b>Role / Designation</b>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    ${data.	role ?? ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-12 col-md-12">
+                                                    <b>About the role</b>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    ${data.about_role ?? ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+
+                                    FormModelDetails('Past Employment Details', html, 'Cancel', '', 0, '', 'GET');
+                            
+                            }
+
+                        }
+
+                    },
+                    error: function (xhr) {
+                        console.log(xhr.responseJSON?.message || 'Something went wrong!');
+                    }
+                }); 
+            });
+            $(document).on('click','.add_past_employment',function(){
+                var user_id = $(this).data('id'); 
+                console.log('USER ID : '+user_id);    
+                $.ajax({
+                    url: '{{ route("frontend.checkpastemployement", Auth::id()) }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        user_id: user_id
+                    },
+                    success: function (response) {
+                        console.log('Response : '+response.status); 
+                        if (response.status) {
+                            let htmladdemform = '';
+                            if (response.data.length === 0) {
+                                htmladdemform = '<p class="text-muted">No past employment Details found</p>';
+                            } else {
+                                    let data = response.data;
+                                    htmladdemform = data;
+                            }
+                            FormModelDetails('Add Past Employment', htmladdemform, 'Cancel', 'Add', 0, '{{ route('admin.logout') }}', 'POST');
+                            $('#formModel').off('shown.bs.modal').on('shown.bs.modal', function () {
+
+                                // SELECT2
+                                $('.select2').select2({
+                                    //dropdownParent: $('#formModel'),
+                                    width: '100%'
+                                });
+
+                                // START DATE PICKER
+                                $('#add_start_date').datepicker({
+                                    format: 'yyyy-mm-dd',
+                                    autoclose: true,
+                                    endDate: new Date(),
+                                    todayHighlight: true
+                                });
+
+                                // END DATE PICKER
+                                $('#add_end_date').datepicker({
+                                    format: 'yyyy-mm-dd',
+                                    autoclose: true,
+                                    endDate: new Date(),
+                                    todayHighlight: true
+                                });
+
+                                // Click icon to open
+                                $('#add_start_date').siblings('.input-group-append').click(function () {
+                                    $('#add_start_date').datepicker('show');
+                                });
+
+                                $('#add_end_date').siblings('.input-group-append').click(function () {
+                                    $('#add_end_date').datepicker('show');
+                                });
+
+                            });
+
+                        }
+
+                    },
+                    error: function (xhr) {
+                        console.log(xhr.responseJSON?.message || 'Something went wrong!');
+                    }
+                });
+            });   
+
+
+            $('#add_start_date').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                endDate: new Date(), // prevent future dates
+                todayHighlight: true
+            });
+
+            // Click icon to open
+            $('#add_start_date').siblings('.input-group-append').click(function () {
+                $('#add_start_date').datepicker('show');
+            });
+            
+                      
+            
+
+            function formatDate(dateString) {
+                if (!dateString) return '';
+
+                const date = new Date(dateString);
+
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = date.toLocaleString('en-US', { month: 'short' });
+                const year = date.getFullYear();
+
+                return `${day}-${month}, ${year}`;
+            }
+
+            
+            //FormModelDetails('Title', 'This is a test', 'cancel', 'ok', 0, null,'POST');
+            function FormModelDetails(title, body, cancel, ok = '', page_id = 0, action = null, method = 'POST') {
+                $('#formModelLabel').text(title);
+                $('#formModelBody').html(body);
+                $('#formModelBtnCalcel').text(cancel);
+                if (ok !== '') {
+                    $('#formModelBtnOk').text(ok).show();
+                } else {
+                    $('#formModelBtnOk').hide();
+                }
+                $('#formPageId').val(page_id);
+                $('#formModel form').attr('action', action);
+                $('#formModel form').attr('method', method);
+                console.log("Form Modal Open");
+                var myFormModal = new bootstrap.Modal(document.getElementById('formModel'));
+                myFormModal.show();
+            }
             // Increase quantity
             $('.input-number-increment').click(function () {
                 let id = $(this).data('id');
@@ -695,7 +1637,7 @@
                     }
                 });
             }
-        });
+        
 
     </script>
 

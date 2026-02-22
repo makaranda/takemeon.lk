@@ -61,6 +61,9 @@ if ($page_seo) {
                 object-fit: fill;
                 background-attachment: fixed;
             }
+            .cursor-pointer {
+                cursor: pointer;
+            }
 
         </style>
     </head>
@@ -70,6 +73,7 @@ if ($page_seo) {
             @yield('content')
         </div> 
         @include('components.footer')
+        @include('others.modals')
         @include('libraries.frontend.scripts')
         @stack('scripts')
   </body>

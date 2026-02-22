@@ -26,6 +26,8 @@ class User extends Authenticatable
         'status',
         'phone',
         'address',
+        'dob',
+        'nic',
         'otp',
         'otp_expires_at',
         'password',
@@ -61,5 +63,23 @@ class User extends Authenticatable
     public function expectingArea()
     {
         return $this->hasOne(UserExpectingArea::class);
+    }
+
+    public function userEducation()
+    {
+        return $this->hasOne(UserEducation::class);
+    }
+    public function schoolLevel()
+    {
+        return $this->hasOne(UserSchoolLevel::class);
+    }
+    public function professionalDetail()
+    {
+        return $this->hasOne(UserProfessionalDetail::class);
+    }
+
+    public function pastEmployments()
+    {
+        return $this->hasMany(UserPastEmployment::class);
     }
 }

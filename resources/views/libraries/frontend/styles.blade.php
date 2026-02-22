@@ -28,7 +28,7 @@
 <!-- CSS here -->
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/owl.carousel.min.css') }}">
-    <link rel="stylesheet" href="{{ url('public//css/flaticon.css') }}">
+    <link rel="stylesheet" href="{{ url('public/assets/css/flaticon.css') }}">
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/price_rangs.css') }}">
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/slicknav.css') }}">
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/animate.min.css') }}">
@@ -48,3 +48,9 @@
 <!--custom font-->
 <link href="https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+

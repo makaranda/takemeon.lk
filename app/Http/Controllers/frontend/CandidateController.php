@@ -46,6 +46,19 @@ use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\UserSocialLink;
+use App\Models\UserExpectingArea;
+use App\Models\UserEducation;
+use App\Models\UserSchoolLevel;
+use App\Models\UserProfessionalDetail;
+use App\Models\UserPastEmployment;
+use App\Models\EmpDesignation;
+use App\Models\EmpIndustry;
+use App\Models\EmpMainCategory;
+use App\Models\EmpSubCategory;
+use App\Models\Province;
+use App\Models\District;
+use App\Models\DistrictCity;
+use Illuminate\Support\Facades\File;
 
 class CandidateController extends Controller
 {
@@ -54,7 +67,7 @@ class CandidateController extends Controller
         VisitorHelper::updateVisitorCount();
         //$user = Auth::user();
         //$user = Auth::user()->load(['socialLinks', 'expectingArea']);
-        $user = User::with(['socialLinks', 'expectingArea'])->find(Auth::id());
+        $user = User::with(['socialLinks', 'expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->find(Auth::id());
         if (!$user) {
             return redirect()->route('frontend.userlogin')
                 ->with('error', 'You must be logged in to access this page.');
@@ -76,12 +89,19 @@ class CandidateController extends Controller
         $cancel_orders = Order::where('user_id', $user->id)->where('confirmation',1)->where('status', 'cancelled')->latest()->get();
         $complete_orders = Order::where('user_id', $user->id)->where('confirmation',1)->where('status', 'completed')->latest()->get();
 
+        $emp_designations = EmpDesignation::where('status',1)->get(); 
+        $emp_industries = EmpIndustry::where('status',1)->get();  
+        $emp_main_categories = EmpMainCategory::where('status',1)->get();  
+        $emp_sub_categories = EmpSubCategory::where('status',1)->get();  
+        $emp_provinces = Province::where('status',1)->get();  
+        $emp_districts = District::where('status',1)->get();  
+        $emp_district_cities = DistrictCity::where('status',1)->get(); 
         //$admin = Auth::guard('admin')->user();
         //dd($admin);
         // if (!empty($admin->role) && $admin->role > 0) {
         //     return redirect()->route('admin.dashboard');
         // } else {
-            return view('pages.frontend.candidatedashboard.index',compact('gallery_home','user','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders'));
+            return view('pages.frontend.candidatedashboard.index',compact('gallery_home','user','about_info','main_slider','according_home','partners_home','random_products','random_blogs','pending_orders','cancel_orders','complete_orders','emp_designations','emp_industries','emp_main_categories','emp_sub_categories','emp_provinces'));
         //}
     }
 
@@ -123,6 +143,9 @@ class CandidateController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone_number' => 'required|string|max:20',
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'dob' => 'nullable|date',
+            'nic' => 'nullable|string|max:14',
+            'address' => 'nullable|string|max:255',
             'password' => 'nullable|string|min:6',
             'confirm_password' => 'nullable|string|same:password',
 
@@ -136,6 +159,9 @@ class CandidateController extends Controller
             $user->email = $request->email;
             $user->username = $request->username;
             $user->phone = $request->phone_number;
+            $user->dob = $request->dob;
+            $user->nic = $request->nic;
+            $user->address = $request->address;
 
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
@@ -180,40 +206,484 @@ class CandidateController extends Controller
         $user = User::findOrFail($user_id);
         
         $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone_number' => 'required|string|max:20',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'password' => 'nullable|string|min:6',
-            'confirm_password' => 'nullable|string|same:password',
-
-            'facebook_link' => 'nullable|url',
-            'linkedin_link' => 'nullable|url',
+            'job_industry' => 'nullable',
+            'job_type' => 'nullable',
+            'designation' => 'nullable',
+            'job_role' => 'nullable',
         ]);
 
-        try {
-            $user->name = $request->full_name;
-            $user->email = $request->email;
-            $user->username = $request->username;
-            $user->phone = $request->phone_number;
+        DB::beginTransaction();
 
-            $user->save();
+        try {
+            
+            $expectingArea = UserExpectingArea::updateOrCreate(
+    ['user_id' => $user->id],
+                [
+                    'job_industry'   => $request->job_industry ?: null,
+                    'job_type'   => $request->job_type ?: null,
+                    'job_role'     => $request->job_role ?: null,
+                    'designation' => $request->designation ?: null,
+                ]
+            );
+
+            // $user->job_industry = $request->job_industry;
+            // $user->job_type = $request->job_type;
+            // $user->job_role = $request->job_role;
+            // $user->designation = $request->designation;
+
+            // $user->save();
+            DB::commit();
+
 
             return response()->json([
                 'status' => true,
-                'message' => 'Profile updated successfully!',
-                'data' => $user
+                'message' => 'Profile Expecting Area updated successfully!',
+                'data' => $expectingArea
             ]);
             
         }catch (\Exception $e) {
-
             DB::rollBack();
-
             return response()->json([
                 'status' => false,
                 'message' => 'Something went wrong!'
             ], 500);
         }
     }
+
+    public function userEducationUpdate(Request $request, $user_id)
+    {
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $request->validate([
+            'highest_education_level' => 'nullable|string|max:255',
+            'educational_specialization' => 'nullable|string|max:255',
+            'institute_university' => 'nullable|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $education = UserEducation::updateOrCreate(
+                ['user_id' => $user_id],
+                [
+                    'highest_education_level'   => $request->highest_education_level ?? null,
+                    'educational_specialization'=> $request->educational_specialization ?? null,
+                    'institute_university'      => $request->institute_university ?? null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Education details updated successfully!',
+                'data' => $education
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function userSchoolLevelUpdate(Request $request, $user_id)
+    {
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $request->validate([
+            'ol_school' => 'nullable|string|max:255',
+            'ol_year'   => 'nullable|digits:4|integer',
+            'al_school' => 'nullable|string|max:255',
+            'al_year'   => 'nullable|digits:4|integer',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $schoolLevel = UserSchoolLevel::updateOrCreate(
+                ['user_id' => $user_id],
+                [
+                    'ol_school' => $request->ol_school ?? null,
+                    'ol_year'   => $request->ol_year ?? null,
+                    'al_school' => $request->al_school ?? null,
+                    'al_year'   => $request->al_year ?? null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'School level details updated successfully!',
+                'data' => $schoolLevel
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function userProfessionalUpdate(Request $request, $user_id)
+    {
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'total_years_experience' => 'nullable|integer|min:0',
+            'skills_summary' => 'nullable|string',
+            'about_yourself' => 'nullable|string',
+            'current_employer' => 'nullable|string|max:255',
+            'current_industry' => 'nullable|string|max:255',
+            'current_business_function' => 'nullable|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'started_in' => 'nullable|date',
+            'notice_period_days' => 'nullable|integer|min:0',
+            'about_current_role' => 'nullable|string',
+            'current_salary' => 'nullable|numeric|min:0',
+
+            'cv_file' => 'nullable|mimes:pdf,doc,docx|max:2048',
+            'nic_front' => 'nullable|image|max:2048',
+            'nic_back' => 'nullable|image|max:2048',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $professional = UserProfessionalDetail::where('user_id', $user_id)->first();
+            $data = $validated;
+
+            // =========================
+            // FOLDER PATHS
+            // =========================
+            $nicPath = public_path('assets/frontend/candidates/nic/');
+            $cvPath  = public_path('assets/frontend/candidates/cv/');
+
+            // Create folders if not exist
+            if (!File::exists($nicPath)) {
+                File::makeDirectory($nicPath, 0755, true);
+            }
+
+            if (!File::exists($cvPath)) {
+                File::makeDirectory($cvPath, 0755, true);
+            }
+
+            // =========================
+            // CV Upload
+            // =========================
+            if ($request->hasFile('cv_file') && $request->file('cv_file')->isValid()) {
+
+                $file = $request->file('cv_file');
+                $filename = 'cv_' . $user_id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                // Delete old file
+                if ($professional && $professional->cv_file && File::exists($cvPath . $professional->cv_file)) {
+                    File::delete($cvPath . $professional->cv_file);
+                }
+
+                $file->move($cvPath, $filename);
+                $data['cv_file'] = $filename;
+            }
+
+            // =========================
+            // NIC Front Upload
+            // =========================
+            if ($request->hasFile('nic_front') && $request->file('nic_front')->isValid()) {
+
+                $file = $request->file('nic_front');
+                $filename = 'nic_front_' . $user_id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                if ($professional && $professional->nic_front && File::exists($nicPath . $professional->nic_front)) {
+                    File::delete($nicPath . $professional->nic_front);
+                }
+
+                $file->move($nicPath, $filename);
+                $data['nic_front'] = $filename;
+            }
+
+            // =========================
+            // NIC Back Upload
+            // =========================
+            if ($request->hasFile('nic_back') && $request->file('nic_back')->isValid()) {
+
+                $file = $request->file('nic_back');
+                $filename = 'nic_back_' . $user_id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                if ($professional && $professional->nic_back && File::exists($nicPath . $professional->nic_back)) {
+                    File::delete($nicPath . $professional->nic_back);
+                }
+
+                $file->move($nicPath, $filename);
+                $data['nic_back'] = $filename;
+            }
+
+            $data['user_id'] = $user_id;
+
+            $professional = UserProfessionalDetail::updateOrCreate(
+                ['user_id' => $user_id],
+                $data
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Professional details updated successfully!',
+                'data' => $professional
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updatePastEmploymentUpdate(Request $request, $user_id)
+    {
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $request->validate([
+            'company_name'      => 'required|string|max:255',
+            'role'              => 'required|string|max:255',
+            'employee_category' => 'required|string|max:255',
+            'industry'          => 'nullable|string|max:255',
+            'start_date'        => 'required|date',
+            'end_date'          => 'nullable|date|after_or_equal:start_date',
+            'about_role'        => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $schoolLevel = UserPastEmployment::updateOrCreate(
+                ['user_id' => $user_id],
+                [
+                    'company_name' => $request->company_name,
+                    'role'   => $request->role,
+                    'employee_category' => $request->employee_category,
+                    'industry'   => $request->industry ?? null,
+                    'start_date'   => $request->start_date,
+                    'end_date'   => $request->end_date ?? null,
+                    'about_role'   => $request->about_role ?? null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Past Employment details updated successfully!',
+                'data' => $schoolLevel
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function fetchPastEmployement($user_id)
+    {
+        // Security check
+        if ($user_id != Auth::id()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $employments = UserPastEmployment::where('user_id', $user_id)
+                        ->latest()
+                        ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $employments
+        ]);
+    }
+    public function detailsPastEmployement(Request $request,$user_id)
+    {
+        // Security check
+        if ($user_id != Auth::id()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $employments = UserPastEmployment::where('user_id', $user_id)
+                        ->where('id',$request->emp_id)
+                        ->latest()
+                        ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $employments
+        ]);
+    }
+
+    public function checkPastEmployement(Request $request, $user_id)
+    {
+        if ($user_id != Auth::id()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $empDesignations  = EmpDesignation::where('status', 1)->orderBy('order')->get();
+        $empIndustries    = EmpIndustry::where('status', 1)->orderBy('order')->get();
+        $empMainCategory  = EmpMainCategory::where('status', 1)->orderBy('order')->get();
+        $empSubCategory   = EmpSubCategory::where('status', 1)->orderBy('order')->get();
+
+        //Build Designation Dropdown
+        $designationList = '<option value="">--- Select ---</option>';
+        foreach ($empDesignations as $designation) {
+            $designationList .= '<option value="'.$designation->id.'">'.$designation->name.'</option>';
+        }
+
+        //Build Industry Dropdown
+        $industryList = '<option value="">--- Select ---</option>';
+        foreach ($empIndustries as $industry) {
+            $industryList .= '<option value="'.$industry->id.'">'.$industry->name.'</option>';
+        }
+
+        //Build Main Category Dropdown
+        $categoryList = '<option value="">--- Select ---</option>';
+        foreach ($empMainCategory as $category) {
+            $categoryList .= '<option value="'.$category->id.'">'.$category->name.'</option>';
+        }
+
+        $html = '
+            <div class="row">
+
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>Company / Employer</label>
+                    <input type="text"
+                        name="company_name"
+                        value=""
+                        placeholder="Type Company / Employer"
+                        class="form-control"/>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>Role / Designation</label>
+                    <select name="designation_id" class="form-control select2">
+                        '.$designationList.'
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>Employee Category</label>
+                    <select name="category_id" class="form-control select2">
+                        '.$categoryList.'
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>Industry (optional)</label>
+                    <select name="industry_id" class="form-control select2">
+                        '.$industryList.'
+                    </select>
+                </div>
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>Start Date</label>
+                    <div class="input-group">
+                        <input type="text"
+                            name="add_start_date"
+                            id="add_start_date"
+                            class="form-control custom-input"
+                            value=""
+                            placeholder="Select Start Date"
+                            autocomplete="off">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-white">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <small class="text-danger error-text add_start_date_error"></small>
+                </div>
+                <div class="col-12 col-md-6 mb-3"> 
+                    <label>End Date</label>
+                    <div class="input-group">
+                        <input type="text"
+                            name="add_end_date"
+                            id="add_end_date"
+                            class="form-control custom-input"
+                            value=""
+                            placeholder="Select End Date"
+                            autocomplete="off">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-white">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <small class="text-danger error-text add_end_date_error"></small>
+                </div>
+
+                <div class="col-12 col-md-12 mb-3"> 
+                    <label>About the role (optional)</label>
+                    <textarea name="about_role" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+        ';
+
+        return response()->json([
+            'status' => true,
+            'data' => $html
+        ]);
+    }
+    
+
+    
 
 }
