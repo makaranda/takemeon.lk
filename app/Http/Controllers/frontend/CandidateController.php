@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\UserSocialLink;
 use App\Models\UserExpectingArea;
 use App\Models\UserEducation;
+use App\Models\UserDetail;
 use App\Models\UserSchoolLevel;
 use App\Models\UserProfessionalDetail;
 use App\Models\UserPastEmployment;
@@ -67,7 +68,7 @@ class CandidateController extends Controller
         VisitorHelper::updateVisitorCount();
         //$user = Auth::user();
         //$user = Auth::user()->load(['socialLinks', 'expectingArea']);
-        $user = User::with(['socialLinks', 'expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->find(Auth::id());
+        $user = User::with(['detail', 'socialLinks','expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->find(Auth::id());
         if (!$user) {
             return redirect()->route('frontend.userlogin')
                 ->with('error', 'You must be logged in to access this page.');
@@ -110,28 +111,157 @@ class CandidateController extends Controller
         //$user = auth()->user(); // secure (ignore passed ID)
         $user = User::where('status',1)->where('id',$user_id)->first();
 
-        if ($request->hasFile('profile_img')) {
-
-            $request->validate([
-                'profile_img' => 'image|mimes:jpg,jpeg,png|max:2048'
-            ]);
-
-            // Delete old image
-            if ($user->profile_img && file_exists(public_path($user->profile_img))) {
-                unlink(public_path($user->profile_img));
-            }
-
-            $file = $request->file('profile_img');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('public/assets/frontend/candidates'), $filename);
-
-            $user->profile_img = $filename;
-            $user->save();
-
-            return response()->json(['status' => 'success']);
+        if (auth()->id() != $user->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized action.'
+            ], 403);
         }
 
+        $user_details = UserDetail::where('user_id',$user_id)->first();
+
+            $profileImgPath  = public_path('assets/frontend/candidates');
+
+            // Create folders if not exist
+            if (!File::exists($profileImgPath)) {
+                File::makeDirectory($profileImgPath, 0755, true);
+            }
+
+            // =========================
+            // Profile Upload
+            // =========================
+            if ($request->hasFile('profile_img') && $request->file('profile_img')->isValid()) {
+
+                $file = $request->file('profile_img');
+                $filename = 'profile_img_' . $user_id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                // Delete old file
+                if ($user_details && $user_details->profile_img && File::exists($profileImgPath . $user_details->profile_img)) {
+                    File::delete($profileImgPath . $user_details->profile_img);
+                }
+
+                $file->move($profileImgPath, $filename);
+                //$data['profile_img'] = $filename;
+                $user_details->profile_img = $filename;
+                $user_details->save();
+
+                return response()->json(['status' => 'success']);
+            }
+        
+
         return response()->json(['status' => 'error'], 400);
+    }
+
+    public function checkProfileCompleteness(Request $request, $user_id)
+    {
+        $user = User::where('status', 1)
+            ->where('id', $user_id)
+            ->with([
+                'detail',
+                'expectingArea',
+                'pastEmployments',
+                'professionalDetail'
+            ])
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        if (auth()->id() != $user->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $totalFields = 0;
+        $completedFields = 0;
+
+        // ----------------------
+        // USERS TABLE
+        // ----------------------
+        $userFields = ['name', 'email', 'phone'];
+        foreach ($userFields as $field) {
+            $totalFields++;
+            if (!empty($user->$field)) {
+                $completedFields++;
+            }
+        }
+
+        // ----------------------
+        // USER DETAILS
+        // ----------------------
+        if ($user->detail) {
+            $detailFields = [
+                'mobile','phone','state','city',
+                'address','dob','nic','sex','profile_img'
+            ];
+
+            foreach ($detailFields as $field) {
+                $totalFields++;
+                if (!empty($user->detail->$field)) {
+                    $completedFields++;
+                }
+            }
+        }
+
+        // ----------------------
+        // EXPECTING AREAS
+        // ----------------------
+        if ($user->expectingArea) {
+            $expectFields = [
+                'job_industry','job_type',
+                'job_role','designation','expected_salary'
+            ];
+
+            foreach ($expectFields as $field) {
+                $totalFields++;
+                if (!empty($user->expectingArea->$field)) {
+                    $completedFields++;
+                }
+            }
+        }
+
+        // ----------------------
+        // PROFESSIONAL DETAILS
+        // ----------------------
+        if ($user->professionalDetail) {
+            $professionalFields = [
+                'total_years_experience',
+                'skills_summary',
+                'about_yourself',
+                'designation',
+                'current_salary'
+            ];
+
+            foreach ($professionalFields as $field) {
+                $totalFields++;
+                if (!empty($user->professionalDetail->$field)) {
+                    $completedFields++;
+                }
+            }
+        }
+
+        // ----------------------
+        // PAST EMPLOYMENTS (at least 1 record)
+        // ----------------------
+        $totalFields++;
+        if ($user->pastEmployments && $user->pastEmployments->count() > 0) {
+            $completedFields++;
+        }
+
+        $percentage = $totalFields > 0
+            ? round(($completedFields / $totalFields) * 100)
+            : 0;
+
+        return response()->json([
+            'status' => true,
+            'percentage' => $percentage
+        ]);
     }
 
     public function userProfileDetailsUpdate(Request $request, $user_id)
@@ -159,15 +289,25 @@ class CandidateController extends Controller
             $user->email = $request->email;
             $user->username = $request->username;
             $user->phone = $request->phone_number;
-            $user->dob = $request->dob;
-            $user->nic = $request->nic;
-            $user->address = $request->address;
+            //$user->dob = $request->dob;
+            //$user->nic = $request->nic;
+            //$user->address = $request->address;
 
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
 
             $user->save();
+
+            UserDetail::updateOrCreate(
+    ['user_id' => $user->id],
+                [
+                    'nic'   => $request->nic ?: null,
+                    'dob'   => $request->dob ?: null,
+                    'address'     => $request->address ?: null,
+                    'sex'     => $request->sex ?: null,
+                ]
+            );
 
             UserSocialLink::updateOrCreate(
     ['user_id' => $user->id],
@@ -194,7 +334,7 @@ class CandidateController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Something went wrong!'
+                'message' => 'Something went wrong!'.$e
             ], 500);
         }    
 
@@ -548,6 +688,7 @@ class CandidateController extends Controller
             'data' => $employments
         ]);
     }
+
     public function detailsPastEmployement(Request $request,$user_id)
     {
         // Security check
@@ -558,10 +699,20 @@ class CandidateController extends Controller
             ], 403);
         }
 
-        $employments = UserPastEmployment::where('user_id', $user_id)
-                        ->where('id',$request->emp_id)
-                        ->latest()
-                        ->first();
+        // $employments = UserPastEmployment::where('user_id', $user_id)
+        //                 ->where('id',$request->emp_id)
+        //                 ->latest()
+        //                 ->first();
+
+        $employments = UserPastEmployment::with([
+                    'industry',
+                    'designation',
+                    'category'
+                ])
+                ->where('user_id', $user_id)
+                ->where('id', $request->emp_id)
+                ->latest()
+                ->first();                
 
         return response()->json([
             'status' => true,
@@ -569,36 +720,208 @@ class CandidateController extends Controller
         ]);
     }
 
+    public function addPastEmployement(Request $request)
+    {
+        $user_id = $request->user_id;
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'.$user_id.' - '.Auth::id()
+            ], 403);
+        }
+
+        $request->validate([
+            'company_name'      => 'required|string|max:255',
+            'designation_id'    => 'required|string|max:255',
+            'category_id'       => 'required|string|max:255',
+            'industry_id'       => 'nullable|string|max:255',
+            'add_start_date'    => 'required|date',
+            'add_end_date'      => 'nullable|date|after_or_equal:add_start_date',
+            'about_role'        => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $employment = UserPastEmployment::create([
+                'user_id'           => $user_id,
+                'company_name'      => $request->company_name,
+                'role'              => $request->designation_id,
+                'employee_category' => $request->category_id,
+                'industry'          => $request->industry_id,
+                'start_date'        => $request->add_start_date,
+                'end_date'          => $request->add_end_date,
+                'about_role'        => $request->about_role,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Past Employment details added successfully!',
+                'data' => $employment
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updatePastEmployement(Request $request, $user_id)
+    {
+        if (auth()->id() != $user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $request->validate([
+            'emp_id'            => 'required|exists:user_past_employments,id',
+            'company_name'      => 'required|string|max:255',
+            'designation_id'    => 'required|integer|exists:emp_designations,id',
+            'category_id'       => 'required|integer|exists:emp_main_categories,id',
+            'industry_id'       => 'nullable|integer|exists:emp_industries,id',
+            'add_start_date'    => 'required|date',
+            'add_end_date'      => 'nullable|date|after_or_equal:add_start_date',
+            'about_role'        => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $employment = UserPastEmployment::where('id', $request->emp_id)
+                            ->where('user_id', $user_id)
+                            ->first();
+
+            if (!$employment) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Employment record not found.'
+                ], 404);
+            }
+
+            $employment->update([
+                'company_name'      => $request->company_name,
+                'role'              => $request->designation_id,
+                'employee_category' => $request->category_id,
+                'industry'          => $request->industry_id,
+                'start_date'        => $request->add_start_date,
+                'end_date'          => $request->add_end_date,
+                'about_role'        => $request->about_role,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Past Employment details updated successfully!',
+                'data' => $employment
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deletePastEmployement(Request $request,$user_id){
+        if ($user_id != Auth::id()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access '
+            ], 403);
+        }
+
+        $emp_id = $request->id;
+
+            $employment = UserPastEmployment::where('id', $emp_id)
+                            ->where('user_id', $user_id)
+                            ->first();
+
+            if (!$employment) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized access or record not found.'
+                ], 403);
+            }
+
+            $employment->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Past employment deleted successfully!',
+            'data' => $employment
+        ]);
+
+    }
+
     public function checkPastEmployement(Request $request, $user_id)
     {
         if ($user_id != Auth::id()) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthorized access'
+                'message' => 'Unauthorized access '
             ], 403);
         }
 
-        $empDesignations  = EmpDesignation::where('status', 1)->orderBy('order')->get();
-        $empIndustries    = EmpIndustry::where('status', 1)->orderBy('order')->get();
-        $empMainCategory  = EmpMainCategory::where('status', 1)->orderBy('order')->get();
-        $empSubCategory   = EmpSubCategory::where('status', 1)->orderBy('order')->get();
+        // $empId = $request->empId ?? '';
+        $empId = $request->input('empId', '');
+        $employment = null;
+
+        if (!empty($empId)) {
+            $employment = UserPastEmployment::where('id', $empId)
+                            ->where('user_id', $user_id)
+                            ->first();
+        }
+
+        $company_name = $employment->company_name ?? '';
+        $start_date   = $employment->start_date ?? '';
+        $end_date     = $employment->end_date ?? '';
+        $about_role   = $employment->about_role ?? '';
+
+        $selectedRole     = $employment->role ?? '';
+        $selectedCategory = $employment->employee_category ?? '';
+        $selectedIndustry = $employment->industry ?? '';
+
+        $empDesignations = EmpDesignation::where('status', 1)->orderBy('order')->get();
+        $empIndustries   = EmpIndustry::where('status', 1)->orderBy('order')->get();
+        $empMainCategory = EmpMainCategory::where('status', 1)->orderBy('order')->get();
 
         //Build Designation Dropdown
         $designationList = '<option value="">--- Select ---</option>';
         foreach ($empDesignations as $designation) {
-            $designationList .= '<option value="'.$designation->id.'">'.$designation->name.'</option>';
+            $selected = ($selectedRole == $designation->id) ? 'selected' : '';
+            $designationList .= '<option value="'.$designation->id.'" '.$selected.'>'.$designation->name.'</option>';
         }
 
         //Build Industry Dropdown
         $industryList = '<option value="">--- Select ---</option>';
         foreach ($empIndustries as $industry) {
-            $industryList .= '<option value="'.$industry->id.'">'.$industry->name.'</option>';
+            $selected = ($selectedIndustry == $industry->id) ? 'selected' : '';
+            $industryList .= '<option value="'.$industry->id.'" '.$selected.'>'.$industry->name.'</option>';
         }
 
         //Build Main Category Dropdown
         $categoryList = '<option value="">--- Select ---</option>';
         foreach ($empMainCategory as $category) {
-            $categoryList .= '<option value="'.$category->id.'">'.$category->name.'</option>';
+            $selected = ($selectedCategory == $category->id) ? 'selected' : '';
+            $categoryList .= '<option value="'.$category->id.'" '.$selected.'>'.$category->name.'</option>';
         }
 
         $html = '
@@ -608,9 +931,10 @@ class CandidateController extends Controller
                     <label>Company / Employer</label>
                     <input type="text"
                         name="company_name"
-                        value=""
+                        value="'.$company_name.'"
                         placeholder="Type Company / Employer"
                         class="form-control"/>
+                    <small class="text-danger error-text company_name_error"></small>
                 </div>
 
                 <div class="col-12 col-md-6 mb-3"> 
@@ -618,6 +942,7 @@ class CandidateController extends Controller
                     <select name="designation_id" class="form-control select2">
                         '.$designationList.'
                     </select>
+                    <small class="text-danger error-text designation_id_error"></small>
                 </div>
 
                 <div class="col-12 col-md-6 mb-3"> 
@@ -625,6 +950,7 @@ class CandidateController extends Controller
                     <select name="category_id" class="form-control select2">
                         '.$categoryList.'
                     </select>
+                    <small class="text-danger error-text category_id_error"></small>
                 </div>
 
                 <div class="col-12 col-md-6 mb-3"> 
@@ -640,7 +966,7 @@ class CandidateController extends Controller
                             name="add_start_date"
                             id="add_start_date"
                             class="form-control custom-input"
-                            value=""
+                            value="'.$start_date.'"
                             placeholder="Select Start Date"
                             autocomplete="off">
                         <div class="input-group-append">
@@ -658,7 +984,7 @@ class CandidateController extends Controller
                             name="add_end_date"
                             id="add_end_date"
                             class="form-control custom-input"
-                            value=""
+                            value="'.$end_date.'"
                             placeholder="Select End Date"
                             autocomplete="off">
                         <div class="input-group-append">
@@ -672,14 +998,15 @@ class CandidateController extends Controller
 
                 <div class="col-12 col-md-12 mb-3"> 
                     <label>About the role (optional)</label>
-                    <textarea name="about_role" class="form-control" rows="5"></textarea>
+                    <textarea name="about_role" class="form-control" rows="5">'.$about_role.'</textarea>
                 </div>
             </div>
         ';
 
         return response()->json([
             'status' => true,
-            'data' => $html
+            'data' => $html,
+            'page_id' => $empId
         ]);
     }
     

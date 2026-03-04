@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 /** Frontend Controllers */
 use App\Http\Controllers\frontend\HomeController;
+use App\Http\Controllers\frontend\JobsController;
 use App\Http\Controllers\frontend\PaymentController;
 use App\Http\Controllers\frontend\CustomerDashboardController;
 use App\Http\Controllers\frontend\CandidateController;
@@ -98,6 +99,16 @@ Route::prefix('/products')->group(function () {
 });
 
 
+// Jobs List Routes
+Route::prefix('/jobs-listing')->group(function () {
+    Route::get('/', [JobsController::class, 'showAllJobs'])->name('frontend.home.jobs');
+    Route::get('/fetch-jobs', [JobsController::class, 'fetchJobs'])->name('frontend.jobs.fetch');
+    Route::get('/find/{cat_slug}', [JobsController::class, 'viewCategory'])->name('frontend.job.category');
+    Route::get('/find/{cat_slug}/{cat_sub_slug}', [JobsController::class, 'viewSubCategory'])->name('frontend.product.subcategory');
+    Route::get('/details/{slug}', [JobsController::class, 'viewJob'])->name('frontend.job.view');
+    Route::get('/view/{id}/{code}', [JobsController::class, 'ajaxView'])->name('frontend.job.ajaxview');
+});
+
 Route::get('/cart', [HomeController::class, 'cartProducts'])->name('frontend.cart');
 Route::post('/add-to-cart', [HomeController::class, 'addToCart'])->name('frontend.cart.add');
 Route::get('/fetch-cart-qty', [HomeController::class, 'fetchCartQty'])->name('frontend.fetchcartqty');
@@ -187,6 +198,11 @@ Route::middleware(['auth', 'candidate'])->group(function () {
         Route::post('/fetch-past-employment/{user_id}',  [CandidateController::class, 'fetchPastEmployement'])->name('frontend.fetchpastemployement');
         Route::post('/details-past-employment/{user_id}',  [CandidateController::class, 'detailsPastEmployement'])->name('frontend.detailspastemployement');
         Route::post('/check-past-employment/{user_id}',  [CandidateController::class, 'checkPastEmployement'])->name('frontend.checkpastemployement');
+        Route::post('/add-past-employment',  [CandidateController::class, 'addPastEmployement'])->name('frontend.addpastemployement');
+        Route::post('/update-past-employment/{user_id}',  [CandidateController::class, 'updatePastEmployement'])->name('frontend.updatepastemployement');
+        Route::post('/delete-past-employment/{user_id}',  [CandidateController::class, 'deletePastEmployement'])->name('frontend.deletepastemployement');
+        
+        Route::post('/check-profile-completeness/{user_id}',  [CandidateController::class, 'checkProfileCompleteness'])->name('frontend.checkprofilecompleteness');
     
     });
 });

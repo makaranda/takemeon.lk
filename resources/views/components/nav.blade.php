@@ -114,8 +114,8 @@
                                             <a href="{{ route('home.index') }}">Home</a>
                                         </li>
 
-                                        <li class="{{ request()->routeIs('frontend.home.products') ? 'active' : '' }}">
-                                            <a href="{{ route('frontend.home.products') }}">Find a Jobs</a>
+                                        <li class="{{ request()->routeIs('frontend.home.jobs') ? 'active' : '' }}">
+                                            <a href="{{ route('frontend.home.jobs') }}">Find a Jobs</a>
                                         </li>
 
                                         <li>
@@ -140,19 +140,17 @@
 
                             <!-- Header Buttons -->
                             <div class="header-btn d-none f-right d-lg-block">
-
                                 @auth
-                                    @if(Auth::user()->role === 'customer')
-                                        <a href="{{ route('customer.dashboard') }}"
-                                           class="btn head-btn1">
+                                    @if(Auth::user()->role === 'candidate')
+                                        <li class="nav-item dropdown navbar_item">
+                                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                                             {{ Auth::user()->name }}
-                                        </a>
-
-                                        <a href="#"
-                                           id="customer_logout_btn"
-                                           class="btn head-btn2">
-                                            Logout
-                                        </a>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="{{ route('candidate.dashboard') }}">Dashboard</a>
+                                            <a class="dropdown-item logout_btn" href="#">Logout</a>
+                                            </div>
+                                        </li>
                                     @endif
                                 @else
                                     <a href="{{ route('frontend.userregister') }}"

@@ -5,12 +5,14 @@ namespace App\Http\Controllers\admin;
 use App\Helpers\SmsHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -147,25 +149,52 @@ class AuthController extends Controller
         if (User::where('username', $request->username)->exists()) {
             return redirect()->back()->withErrors(['username' => 'Username already exists.']);
         }
-        $user = User::create([
-            'name' => $request->full_name ?? 'User',
-            'username' => $request->username,
-            'email' => $request->email ?? '',
-            'phone' => $request->phone_number,
-            'address' => $request->address ?? '',
-            'password' => Hash::make($request->password),
-            'role' => 'candidate',
-            'status' => 0,
-            'otp' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(5), // 5 min expiry
-        ]);
+
+        $user = null;
+        $user = DB::transaction(function () use ($request, $otp) {
+        $slug = $this->generateUniqueSlug($request->full_name);
+            $user = User::create([
+                'name' => $request->full_name ?? 'User',
+                'username' => $request->username,
+                'email' => $request->email ?? '',
+                'phone' => $request->phone_number,
+                'password' => Hash::make($request->password),
+                'slug' => $slug,
+                'role' => 'candidate',
+                'status' => 0,
+                'otp' => $otp,
+                'otp_expires_at' => Carbon::now()->addMinutes(5), // 5 min expiry
+            ]);
+
+            $user->detail()->create([
+                'mobile'  => $request->phone_number,
+                'address' => $request->address ?? '',
+            ]);
+
+            return $user;
+
+        });
 
         SmsHelper::send($request->phone_number, "Hi {$request->full_name},\nYou have successfully registered here,
         \nYour OTP is: {$otp}\nValid for 5 minutes.
-\nUsername: {$request->username}\nEmail: {$request->email}\nPassword: {$request->password}\nLogin URL: {$loginURL}\n\nPlease login to your account.\n\nIf you have any questions, feel free to contact us.\n\nThanks,\nEcommerce Team");
+\nUsername: {$request->username}\nEmail: {$request->email}\nPassword: {$request->password}\nLogin URL: {$loginURL}\n\nPlease login to your account.\n\nIf you have any questions, feel free to contact us.\n\nThanks,\nTakemeon Team");
 
 
         return redirect()->route('frontend.verifyOtpForm', $user->id)->with('success', 'OTP sent to your phone.');
+    }
+
+    private function generateUniqueSlug($username)
+    {
+        $slug = Str::slug($username);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (User::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
     }
 
     public function verifyOtpForm($id)

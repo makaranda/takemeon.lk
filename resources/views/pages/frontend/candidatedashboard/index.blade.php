@@ -72,7 +72,7 @@
                         <div class="row">
                             <div class="col-12 col-md-12">
                                 <div class="profile-wrapper">
-                                    <img class="align-self-start mr-3 profile-pic" id="profilePreview" src="https://takemeon.websl.lk/uploads/post/profile-pic/Group 7420260213110207.png" alt="{{ Auth::user()->name }}"/>
+                                    <img class="align-self-start mr-3 profile-pic" id="profilePreview" src="{{ asset('public/assets/frontend/candidates/'. optional($user->detail)->profile_img) }}" alt="{{ Auth::user()->name }}"/>
 
                                    <div class="profile-overlay">
                                         Click to Change
@@ -160,6 +160,14 @@
                             Past Employments
                             </a>
 
+                            <a class="nav-link rounded-0 logout_btn"
+                            id="logout"
+                            data-toggle="pill"
+                            href="#"
+                            role="tab">
+                            logout
+                            </a>
+
                         </div>
 
                         <!-- RIGHT SIDE CONTENT -->
@@ -187,14 +195,14 @@
                                                 <input type="email" placeholder="Enter email address" value="{{ old('email',Auth::user()->email) }}" name="email" class="form-control custom-input">
                                                 <small class="text-danger error-text email_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-6">
+                                            <div class="form-group col-12 col-md-4">
                                                 <label>DOB</label>
                                                 <div class="input-group">
                                                     <input type="text"
                                                         name="dob"
                                                         id="dob"
                                                         class="form-control custom-input"
-                                                        value="{{ old('dob', Auth::user()->dob) }}"
+                                                        value="{{ old('dob', default: $user->detail->dob) }}"
                                                         placeholder="Select DOB"
                                                         autocomplete="off">
 
@@ -206,14 +214,31 @@
                                                 </div>
                                                 <small class="text-danger error-text dob_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-6">
+                                            <div class="form-group col-12 col-md-4">
                                                 <label>NIC</label>
-                                                <input type="text" placeholder="Enter NIC" value="{{ old('nic',Auth::user()->nic) }}" id="nic"  name="nic" class="form-control custom-input">
+                                                <input type="text" placeholder="Enter NIC" value="{{ old('nic',$user->detail->nic) }}" name="nic" class="form-control custom-input"> 
                                                 <small class="text-danger error-text nic_error"></small>
+                                            </div>
+                                            <div class="form-group col-12 col-md-4">
+                                                <label class="w-100">Sex</label>
+                                                <select id="sex" name="sex" class="form-control custom-input">
+                                                    <option value="">-- Select Sex --</option>
+
+                                                    <option value="male"
+                                                        {{ old('sex', optional($user->detail)->sex) == 'male' ? 'selected' : '' }}>
+                                                        Male
+                                                    </option>
+
+                                                    <option value="female"
+                                                        {{ old('sex', optional($user->detail)->sex) == 'female' ? 'selected' : '' }}>
+                                                        Female
+                                                    </option>
+                                                </select>
+                                                <small class="text-danger error-text sex_error"></small>
                                             </div>
                                             <div class="form-group col-12 col-md-12">
                                                 <label>Address</label>
-                                                <input type="text" placeholder="Enter Address" value="{{ old('address',Auth::user()->address) }}" name="address" class="form-control custom-input">
+                                                <input type="text" placeholder="Enter Address" value="{{ old('address',$user->detail->address) }}" name="address" class="form-control custom-input">
                                                 <small class="text-danger error-text address_error"></small>
                                             </div>
                                             <div class="form-group col-12 col-md-6">
@@ -733,6 +758,25 @@
                 }
             }
         }
+
+        .btn4{
+            padding: 20px;
+            background-color: #ababab;
+            border: 1px solid #706f6f;
+        }
+
+        .btn5 {
+            padding: 20px;
+            background-color: #930000;
+            border: 1px solid #460000;
+        }
+
+        .logout_btn {
+            background-color: red;
+            color: #fff !important;
+            text-transform: capitalize;
+        }
+        
     </style>
 @endpush
 
@@ -745,6 +789,8 @@
             $('.profile-wrapper').click(function () {
                 $('#profileInput').click();
             });
+
+             
 
              $('#profileInput').change(function () {
 
@@ -836,6 +882,8 @@
                             showConfirmButton: false
                         });
 
+                        checkProfileCompleteness();
+
                         // Update values dynamically
                         $('input[name="full_name"]').val(response.data.name);
                         $('input[name="email"]').val(response.data.email);
@@ -918,6 +966,8 @@
                             showConfirmButton: false
                         });
 
+                        checkProfileCompleteness();
+
                         // Update values dynamically
                         $('input[name="job_industry"]').val(response.data.job_industry);
                         $('input[name="job_type"]').val(response.data.job_type);
@@ -982,6 +1032,8 @@
                             showConfirmButton: false
                         });
 
+                        checkProfileCompleteness();
+
                         // Update values dynamically
                         $('input[name="highest_education_level"]').val(response.data.highest_education_level);
                         $('input[name="educational_specialization"]').val(response.data.educational_specialization);
@@ -1044,6 +1096,8 @@
                             position: "bottom-end",
                             showConfirmButton: false
                         });
+
+                        checkProfileCompleteness();
 
                         // Update values dynamically
                         $('input[name="al_school"]').val(response.data.al_school);
@@ -1140,6 +1194,8 @@
                             showConfirmButton: false
                         });
 
+                        checkProfileCompleteness();
+
                         // Update values dynamically
                         $('input[name="total_years_experience"]').val(response.data.total_years_experience);
                         $('input[name="skills_summary"]').val(response.data.skills_summary);
@@ -1192,6 +1248,77 @@
                 $('#started_in').datepicker('show');
             });
 
+            $('#formModelBtnOk').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#formModalRooute');
+                let url = form.attr('action');
+                let user_id = '{{ Auth::id() }}';
+                let emp_id = $('#formPageId').val() ?? 0;
+
+                // serialize form
+                let formData = form.serialize()+'&user_id='+user_id+'&_token={{ csrf_token() }}&emp_id='+emp_id+'';
+                console.log('user_id: '+user_id+' | Emp ID: '+emp_id);
+                // Clear old errors
+                $('.error-text').text('');
+                $('.form-control').removeClass('is-invalid');
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#formModelBtnOk').prop('disabled', true);
+                    },
+                    success: function (response) {
+                        console.log('Message: '+response.message);
+
+                        $('#formModelBtnOk').prop('disabled', false);
+
+                        fetchPastEmployement();
+                        checkProfileCompleteness();
+
+                        // Proper reset
+                        form[0].reset();
+
+                        // Hide modal properly
+                        $('#formModel').modal('hide');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            position: "bottom-end",
+                            showConfirmButton: false
+                        });
+
+                    },
+                    error: function (xhr) {
+
+                        $('#formModelBtnOk').prop('disabled', false);
+
+                        if (xhr.status === 422) {
+
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+
+                                $('.' + key + '_error').text(value[0]);
+                                $('[name="' + key + '"]').addClass('is-invalid');
+
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                position: "bottom-end",
+                                text: 'Please fix the highlighted fields.'
+                            });
+                        }
+                    }
+                });
+            });
 
             $('#updatePastEmpBtn').on('click', function (e) {
                 e.preventDefault();
@@ -1223,6 +1350,8 @@
                             position: "bottom-end",
                             showConfirmButton: false
                         });
+
+                        checkProfileCompleteness();
 
                         // Update values dynamically
                         $('input[name="total_years_experience"]').val(response.data.total_years_experience);
@@ -1285,11 +1414,48 @@
 
              $(document).on('click', '#employment-tab', function () {
                 fetchPastEmployement();
+                checkProfileCompleteness();
             });
-            
+
+            checkProfileCompleteness();
+            function checkProfileCompleteness() {
+                $.ajax({
+                    url: '{{ route("frontend.checkprofilecompleteness", Auth::id()) }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+
+                        if (response.status) {
+
+                            let percentage = response.percentage;
+
+                            $('.progress-bar')
+                                .css('width', percentage + '%')
+                                .attr('aria-valuenow', percentage)
+                                .text(percentage + '%');
+
+                            // Optional: Change color dynamically
+                            $('.progress-bar')
+                                .removeClass('bg-danger bg-warning bg-success');
+
+                            if (percentage < 40) {
+                                $('.progress-bar').addClass('bg-danger');
+                            } else if (percentage < 70) {
+                                $('.progress-bar').addClass('bg-warning');
+                            } else {
+                                $('.progress-bar').addClass('bg-success');
+                            }
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(xhr.responseJSON?.message || 'Something went wrong!');
+                    }
+                });
+            }
 
             fetchPastEmployement();
-
             function fetchPastEmployement(user_id = '{{ Auth::id() }}') {
 
                 $.ajax({
@@ -1428,6 +1594,14 @@
                                     <div class="row">
                                         <div class="col-12 col-md-12">
                                             <div class="form-group row">
+                                                <div class="col-12 col-md-12 text-right">
+                                                    <button type="button" id="edit_pastemp" data-userid="${user_id}" data-empid="${emp_id}" class="btn btn4">Edit</button>
+                                                    <button type="button" id="delete_pastemp" data-userid="${user_id}" data-empid="${emp_id}" class="btn btn5">Delete</button>
+                                                </div>
+                                            </div>    
+                                        </div>    
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group row">
                                                 <div class="col-12 col-md-12">
                                                     <b>${data.company_name ?? ''}</b>
                                                 </div>
@@ -1442,7 +1616,7 @@
                                                     <b>Industry</b>
                                                 </div>
                                                 <div class="col-12 col-md-12">
-                                                    ${data.industry ?? '-'}
+                                                    ${data.industry.name ?? '-'}
                                                 </div>
                                             </div>
                                         </div>
@@ -1452,7 +1626,7 @@
                                                     <b>Business Function</b>
                                                 </div>
                                                 <div class="col-12 col-md-12">
-                                                    ${data.employee_category	 ?? ''}
+                                                    ${data.category.name	 ?? ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -1462,7 +1636,7 @@
                                                     <b>Role / Designation</b>
                                                 </div>
                                                 <div class="col-12 col-md-12">
-                                                    ${data.	role ?? ''}
+                                                    ${data.designation.name ?? ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -1490,6 +1664,151 @@
                     }
                 }); 
             });
+
+            $(document).on('click','#edit_pastemp',function(){
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to edit this record!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#563061',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, edit it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        let empId  = $(this).data('empid');
+                        let userId = $(this).data('userid');
+                        console.log('Emp ID '+empId+' User ID '+userId);
+                        let editUrl = "{{ route('frontend.deletepastemployement', ':id') }}";
+                        editUrl = editUrl.replace(':id', empId);
+
+                        $('#formModel').modal('hide');
+
+                        $.ajax({
+                            url: '{{ route("frontend.checkpastemployement", Auth::id()) }}',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                user_id: userId,
+                                empId: empId
+                            },
+                            success: function (response) {
+                                console.log('Response : '+response.page_id); 
+                                if (response.status) {
+                                    let htmladdemform = '';
+                                    if (response.data.length === 0) {
+                                        htmladdemform = '<p class="text-muted">No past employment Details found</p>';
+                                    } else {
+                                            let data = response.data;
+                                            htmladdemform = data;
+                                    }
+                                    
+                                    //$('#formPageId').val(response.page_id);
+
+                                    FormModelDetails('Edit Past Employment', htmladdemform, 'Cancel', 'Update', response.page_id, '{{ route("frontend.updatepastemployement", Auth::id()) }}', 'POST');
+
+                                    $('#formModel').off('shown.bs.modal').on('shown.bs.modal', function () {
+
+                                        // SELECT2
+                                        $('.select2').select2({
+                                            //dropdownParent: $('#formModel'),
+                                            width: '100%'
+                                        });
+
+                                        // START DATE PICKER
+                                        $('#add_start_date').datepicker({
+                                            format: 'yyyy-mm-dd',
+                                            autoclose: true,
+                                            endDate: new Date(),
+                                            todayHighlight: true
+                                        });
+
+                                        // END DATE PICKER
+                                        $('#add_end_date').datepicker({
+                                            format: 'yyyy-mm-dd',
+                                            autoclose: true,
+                                            endDate: new Date(),
+                                            todayHighlight: true
+                                        });
+
+                                        // Click icon to open
+                                        $('#add_start_date').siblings('.input-group-append').click(function () {
+                                            $('#add_start_date').datepicker('show');
+                                        });
+
+                                        $('#add_end_date').siblings('.input-group-append').click(function () {
+                                            $('#add_end_date').datepicker('show');
+                                        });
+
+                                    });
+
+                                }
+
+                            },
+                            error: function (xhr) {
+                                console.log(xhr.responseJSON?.message || 'Something went wrong!');
+                            }
+                        });
+
+                    }
+                });
+
+            });
+
+            $(document).on('click','#delete_pastemp',function(){
+                
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This record will be permanently deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        let empId  = $(this).data('empid');
+                        let userId = $(this).data('userid');
+                        console.log('Emp ID '+empId+' User ID '+userId);
+                        let deleteUrl = "{{ route('frontend.deletepastemployement', ':id') }}";
+                        deleteUrl = deleteUrl.replace(':id', empId);
+
+                        $.ajax({
+                            url: '{{ route('frontend.deletepastemployement','empId') }}', 
+                            type: 'POST',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                user_id: userId
+                            },
+                            success: function (response) {
+
+                                // Swal.fire(
+                                //     icon: 'success',
+                                //     title: 'Deleted!',
+                                //     position: "bottom-end",
+                                //     text: 'Past Employement Record has been deleted.'
+                                // );
+
+                                // remove row from UI (optional)
+                                // $('#row_'+empId).remove();
+                            },
+                            error: function () {
+                                Swal.fire(
+                                    'Error!',
+                                    'Something went wrong.',
+                                    'error'
+                                );
+                            }
+                        });
+
+                    }
+                });
+            });
+
             $(document).on('click','.add_past_employment',function(){
                 var user_id = $(this).data('id'); 
                 console.log('USER ID : '+user_id);    
@@ -1510,7 +1829,7 @@
                                     let data = response.data;
                                     htmladdemform = data;
                             }
-                            FormModelDetails('Add Past Employment', htmladdemform, 'Cancel', 'Add', 0, '{{ route('admin.logout') }}', 'POST');
+                            FormModelDetails('Add Past Employment', htmladdemform, 'Cancel', 'Add', 0, '{{ route('frontend.addpastemployement') }}', 'POST');
                             $('#formModel').off('shown.bs.modal').on('shown.bs.modal', function () {
 
                                 // SELECT2

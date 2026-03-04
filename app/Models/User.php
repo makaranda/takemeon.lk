@@ -23,15 +23,12 @@ class User extends Authenticatable
         'email',
         'username',
         'role',
+        'slug',
         'status',
         'phone',
-        'address',
-        'dob',
-        'nic',
         'otp',
         'otp_expires_at',
         'password',
-        'profile_img',
         'active',
     ];
 
@@ -81,5 +78,10 @@ class User extends Authenticatable
     public function pastEmployments()
     {
         return $this->hasMany(UserPastEmployment::class);
+    }
+
+    public function detail()
+    {
+        return $this->hasOne(UserDetail::class);
     }
 }

@@ -39,6 +39,8 @@
 <script src="{{ url('public/assets/frontend/js/plugins.js') }}"></script>
 <script src="{{ url('public/assets/frontend/js/main.js') }}"></script>
 
+<script src="{{ url('public/assets/js/jquery.redirect.js') }}"></script>
+
 
 <!-- Bootstrap 5.3 JS (Include before closing </body>) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -80,6 +82,23 @@
         AlertModelDetails('Logout', 'Are you sure you want to logout this Customer?', 'Cancel', 'Logout', 0, '{{ route('frontend.userlogout') }}', 'GET');
     });
 
+
+    $('.logout_btn').on('click',function(){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to Logout!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#563061',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Logout!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.redirect("{{ route('frontend.userlogout') }}", {user: "johnDoe"}, "GET", "_self");
+            }
+        });    
+
+        });
 </script>
 
 <script type="text/javascript">

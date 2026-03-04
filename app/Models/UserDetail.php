@@ -9,7 +9,7 @@ class UserDetail extends Model
 {
     use HasFactory;
     protected $table = 'user_details';
-    protected $fillable = ['user_id', 'mobile', 'phone', 'state', 'city', 'address'];
+    protected $fillable = ['user_id', 'mobile', 'phone', 'state', 'city', 'address','dob','nic','sex','profile_img'];
 
     public function user()
     {

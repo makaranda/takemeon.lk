@@ -190,6 +190,11 @@
           }
         }
       }
+      li.active{
+        a{
+          color: var(--primary-color);
+        }
+      }
 
       ul.submenu {
         border-top: 5px solid var(--third-color);
@@ -262,4 +267,32 @@ form.search-box {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #b360ff; 
+}
+
+.sticky-bar {
+  z-index: 1023;
+}
+
+.navbar_item{
+  a{
+    color: #252b60;
+    border: 1px solid #252b60;
+  }
+  .dropdown-menu{
+    a{
+        border: none;
+        background-color: #fff;
+        color: black !important;
+        &:hover{
+          background-color: #cccccc;
+        }
+    }
+  }
+}
+
+.btn-info {
+    padding: 12px;
+    color: #8f50a2;
+    background-color: #fff;
+    font-weight: 900;
 }

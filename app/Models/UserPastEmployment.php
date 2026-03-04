@@ -29,4 +29,19 @@ class UserPastEmployment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function industry()
+    {
+        return $this->belongsTo(EmpIndustry::class, 'industry');
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo(EmpDesignation::class, 'role');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(EmpMainCategory::class, 'employee_category');
+    }
 }
