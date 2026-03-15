@@ -21,4 +21,9 @@ class EmpIndustry extends Model
     {
         return $this->hasMany(EmpDesignation::class, 'industry_id');
     }   
+    public function blogs()
+    {
+        return $this->hasMany(Blog::class, 'category_id');
+    }
+    
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -275,7 +276,87 @@ class AuthController extends Controller
         return back()->withErrors(['username' => 'Invalid Credentials']);
     }
 
-   
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+
+            $googleUser = Socialite::driver('google')->user();
+
+            $user = User::where('email',$googleUser->email)->first();
+
+            if(!$user){
+
+                $user = User::create([
+                    'name'=>$googleUser->name,
+                    'email'=>$googleUser->email,
+                    'username'=>Str::slug($googleUser->name).rand(100,999),
+                    'password'=>Hash::make(Str::random(16)),
+                    'role'=>'candidate',
+                    'status'=>1
+                ]);
+
+                UserDetail::create([
+                    'user_id'=>$user->id
+                ]);
+
+            }
+
+            Auth::login($user);
+
+            return redirect()->route('candidate.dashboard');
+
+        } catch (\Exception $e) {
+
+            return redirect()->route('frontend.userlogin');
+
+        }
+    }
+
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+
+            $facebookUser = Socialite::driver('facebook')->user();
+
+            $user = User::where('email',$facebookUser->email)->first();
+
+            if(!$user){
+
+                $user = User::create([
+                    'name'=>$facebookUser->name,
+                    'email'=>$facebookUser->email,
+                    'username'=>Str::slug($facebookUser->name).rand(100,999),
+                    'password'=>Hash::make(Str::random(16)),
+                    'role'=>'candidate',
+                    'status'=>1
+                ]);
+
+                UserDetail::create([
+                    'user_id'=>$user->id
+                ]);
+
+            }
+
+            Auth::login($user);
+
+            return redirect()->route('candidate.dashboard');
+
+        } catch (\Exception $e) {
+
+            return redirect()->route('frontend.userlogin');
+
+        }
+    }
 
     public function logout()
     {

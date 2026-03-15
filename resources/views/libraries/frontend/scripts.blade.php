@@ -16,7 +16,7 @@
 <!-- Jquery Slick , Owl-Carousel Plugins -->
 <script src="{{ url('public/assets/frontend/js/owl.carousel.min.js') }}"></script>
 <script src="{{ url('public/assets/frontend/js/slick.min.js') }}"></script>
-<script src="{{ url('public/assets/frontend/js/price_rangs.js') }}"></script>
+<script src="{{ url('public/assets/frontend/js/price_rangs.js') }}?v=445"></script>
 
 <!-- One Page, Animated-HeadLin -->
 <script src="{{ url('public/assets/frontend/js/wow.min.js') }}"></script>

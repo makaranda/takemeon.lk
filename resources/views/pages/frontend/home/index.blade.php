@@ -21,16 +21,28 @@
                             <div class="col-xl-8">
                                 <!-- form -->
                                 <form action="#" class="search-box">
-                                    <div class="input-form">
-                                        <input type="text" placeholder="Job Title or keyword">
+                                    
+                                    <div class="select-form1">
+                                        <div class="select-itms1">
+                                            <select name="select_industry" id="select_industry">
+                                                <option value="">Select </option>
+                                                @if($industries)
+                                                    @foreach ($industries as $industry)
+                                                        <option value="{{  $industry->slug  }}">{{ $industry->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="select-form">
-                                        <div class="select-itms">
-                                            <select name="select" id="select1">
-                                                <option value="">Location BD</option>
-                                                <option value="">Location PK</option>
-                                                <option value="">Location US</option>
-                                                <option value="">Location UK</option>
+                                    <div class="select-form1">
+                                        <div class="select-itms1">
+                                            <select name="select_role" id="select_role">
+                                                <option value="">Select </option>
+                                                @if($designations)
+                                                    @foreach ($designations as $designation)
+                                                        <option value="{{  $designation->slug  }}">{{ $designation->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -483,6 +495,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <style>
+        .select-form1 {
+            .nice-select{
+                display: none;
+            }
+            .select2-container{
+                .selection{
+                    .select2-selection--single {
+                        height: 70px;
+                        .select2-selection__rendered{
+                            height: 70px;
+                            align-content: center;
+                        }
+                        .select2-selection__arrow{
+                            height: 70px;
+                        }
+                    }
+                }
+            }
+        }
+        .select-form2 {
+            .nice-select{
+                display: none;
+            }
+            .select2-container{
+                .selection{
+                    .select2-selection--single {
+                        height: 70px;
+                        .select2-selection__rendered{
+                            height: 70px;
+                            align-content: center;
+                        }
+                        .select2-selection__arrow{
+                            height: 70px;
+                        }
+                    }
+                }
+            }
+        }
         img.img-fluid.login-logo{
             width: 120px !important;
         }
@@ -512,11 +562,22 @@
     {{-- <script src="https://unpkg.com/wavesurfer.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
+
+            $('#select_industry').select2({
+                placeholder: "Select Industry",
+                allowClear: true
+            });
+
+            $('#select_role').select2({
+                placeholder: "Select Role",
+                allowClear: true
+            });
 
         });
     </script>
     <script>
+
         // document.addEventListener('DOMContentLoaded', function () {
         //     new Swiper('.partner__carousel', {
         //         loop: true,

@@ -14,6 +14,8 @@ class Blog extends Model
         'title',
         'description',
         'sub_description',
+        'category_id',
+        'tags',
         'feature_image',
         'blog_type',
         'slug',
@@ -28,6 +30,11 @@ class Blog extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(EmpIndustry::class, 'category_id');
     }
 
 }

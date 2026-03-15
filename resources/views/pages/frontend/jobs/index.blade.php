@@ -63,7 +63,7 @@
                                     </div>
                                     <!-- Select job items start -->
                                     <div class="select-job-items2">
-                                        <select name="category" name="category" id="category">
+                                        <select name="category" class="select" id="category">
                                             <option value="">Select Categories</option>
                                             @if($categories)
                                                 @foreach ($categories as $category)
@@ -76,16 +76,40 @@
                                         <h4>Job Sub Category</h4>
                                     </div>
                                     <div class="select-job-items2">
-                                        <select name="sub_category" id="sub_category">
+                                        <select name="sub_category" id="sub_category" class="select">
                                             <option value="">Select Sub Categories</option>
                                             @if($subCategories)
                                                 @foreach ($subCategories as $subCategory)
-                                                    <option value="{{ $subCategory->id }}" 
-                                                    {{ old('color') == $subCategory->id ? 'selected' : '' }}>
+                                                    <option value="{{ $subCategory->id }}">
                                                     {{ $subCategory->name }}
                                                 </option>
                                                 @endforeach
                                             @endif
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="small-section-tittle2">
+                                        <h4>District</h4>
+                                    </div>
+                                    <div class="select-job-items2">
+                                        <select name="district" id="district" class="select">
+                                            <option value="">Select District</option>
+                                            @if($districts)
+                                                @foreach ($districts as $district)
+                                                    <option value="{{ $district->id }}">
+                                                    {{ $district->name }}
+                                                </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="small-section-tittle2">
+                                        <h4>Cities</h4>
+                                    </div>
+                                    <div class="select-job-items2">
+                                        <select name="district_cities" id="district_cities" class="select">
+                                            <option value="">Select City</option>
                                         </select>
                                     </div>
                                 </div>
@@ -110,6 +134,30 @@
                                     </div>
                                 </aside>
                                 <!-- range end -->
+                                <div class="select-Categories pb-20">
+                                    <div class="small-section-tittle2 mb-20">
+                                        <h4>Sort by Sex</h4>
+                                    </div>
+
+                                    <label class="container category-item">
+                                        <input type="checkbox"
+                                            id="sex_male"
+                                            name="sex[]"
+                                            value="male">
+                                        <span class="checkmark"></span>
+                                        Male
+                                    </label>
+
+                                    <label class="container category-item">
+                                        <input type="checkbox"
+                                            id="sex_female"
+                                            name="sex[]"
+                                            value="female">
+                                        <span class="checkmark"></span>
+                                        Female
+                                    </label>
+                                </div>
+
                                 <!-- select-Categories start -->
                                 <div class="select-Categories pb-20">
                                     <div class="small-section-tittle2 mb-20">
@@ -157,12 +205,30 @@
                     </div>
                     <!--?  Right content -->
                     <div class="col-xl-9 col-lg-8 col-md-8">
-                        <div class="latest-items latest-items2">
-                            <div class="row" id="products_list">
+                        <section class="featured-job-area">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="count-job mb-35">
+                                            <span>{{ number_format($jobsCount) }} Jobs found</span>
+                                            <!-- Select job items start -->
+                                            <div class="select-job-items">
+                                                <span>Sort by</span>
+                                                <select name="select" style="display: none;" id="sort_by">
+                                                    <option value="DESC">Date: Newest on top</option>
+                                                    <option value="ASC">Date: Oldest on top</option>
+                                                </select>
+                                            </div>
+                                            <!--  Select job items End-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="jobs_list">
 
 
+                                </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -316,11 +382,8 @@
             $("#readMoreBtn").click(function() {
 
                 let hiddenItems = $(".category-item.d-none").slice(0, itemsToShow);
-
                 hiddenItems.removeClass("d-none");
-
                 currentlyVisible += itemsToShow;
-
                 if (currentlyVisible >= totalItems) {
                     $("#readMoreBtn").hide();
                 }
@@ -346,36 +409,86 @@
             }
 
                 // Initial load
-            fetchProducts();
-
+            fetchJobs();
             // Re-fetch on filter change
             $('#size, #color, input[name="category_id[]"], input[name="brand_id[]"], #price_range').on('change', function() {
-                fetchProducts();
+                fetchJobs();
             });
 
-            function fetchProducts() {
-                console.log($('#initial_subcategory').val());
+            $('#district, #district_cities').change(function(){
+                fetchJobs();
+            });
+
+            $('input[name="sex[]"]').change(function(){
+                console.log('SEX: '+$(this).val());
+                fetchJobs();
+            });
+
+            $('input[name="category_id[]"]').change(function(){
+                fetchJobs();
+            });
+
+            $('#sort_by').change(function(){
+                fetchJobs();
+            });
+
+            function fetchJobs() {
+                //console.log($('#initial_subcategory').val());
                 $.ajax({
                     url: "{{ route('frontend.jobs.fetch') }}",
                     type: "GET",
                     data: {
-                        size: $('#size').val(),
-                        color: $('#color').val(),
+                        district_id: $('#district').val(),
+                        city_id: $('#district_cities').val(),
                         category_id: $('input[name="category_id[]"]:checked').map(function() { return this.value; }).get(),
                         brand_id: $('input[name="brand_id[]"]:checked').map(function() { return this.value; }).get(),
                         price_range: $('#price_range').val(),
+                        sex: $('input[name="sex[]"]:checked').map(function(){
+                            return this.value;
+                        }).get(),
                         //subcategory_id: $('input[name="subcategory_id[]"]:checked').map(function() { return this.value; }).get()
-                        subcategory_id: $('#initial_subcategory').val() || ''
+                        subcategory_id: $('#initial_subcategory').val() || '',
+                        sort_by: $('#sort_by').val()
                     },
                     dataType: "json",
                     success: function(data) {
-                        $('#products_list').html(data.html);
+                        $('#jobs_list').html(data.html);
                     },
                     error: function(xhr, status, error) {
-                        $('#products_list').html('<p>Error loading products.</p>');
+                        $('#jobs_list').html('<p>Error loading jobs.</p>');
                     }
                 });
             }
+
+            $('.select2').select2();
+
+            $('#district').on('change', function(){
+                let district_id = $(this).val();
+                var url = "{{ route('get.cities', ':district_id') }}";
+                url = url.replace(':district_id', district_id);
+                console.log('URL: '+url);
+                if(district_id){
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        success:function(data){
+                            $('#district_cities').html('<option value="">Select City</option>');
+                            $.each(data, function(key,value){
+                                $("#district_cities").append(
+                                    '<option value="'+value.id+'">'+value.name+'</option>'
+                                );
+                            });
+                            $('#district_cities').niceSelect('update');
+                        }
+                    });
+                }else{
+                    $('#district_cities').html('<option value="">Select City</option>');
+                    $('#district_cities').niceSelect('update');
+                }
+
+            });
+
+
         });
     </script>
 @endpush

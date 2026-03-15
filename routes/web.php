@@ -71,6 +71,15 @@ Route::post('/verify-otp-form', [AuthController::class, 'verifyOtp'])->name('fro
 Route::get('/verify-otp/{id}', [AuthController::class, 'verifyOtpForm'])->name('frontend.verifyOtpForm');
 Route::post('/verify-otp', [AuthController::class, 'verifyOtpSubmit'])->name('frontend.verifyOtpSubmit');
 
+/* GOOGLE */
+Route::get('/auth/google', [AuthController::class,'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [AuthController::class,'handleGoogleCallback']);
+
+/* FACEBOOK */
+Route::get('/auth/facebook', [AuthController::class,'redirectToFacebook'])->name('facebook.login');
+Route::get('/auth/facebook/callback', [AuthController::class,'handleFacebookCallback']);
+
+
 // Frontend Routes
 Route::get('/pay-online', [HomeController::class, 'payOnline'])->name('frontend.payonline');
 Route::get('/enroll', [HomeController::class, 'enroll'])->name('frontend.enroll.now');
@@ -107,6 +116,7 @@ Route::prefix('/jobs-listing')->group(function () {
     Route::get('/find/{cat_slug}/{cat_sub_slug}', [JobsController::class, 'viewSubCategory'])->name('frontend.product.subcategory');
     Route::get('/details/{slug}', [JobsController::class, 'viewJob'])->name('frontend.job.view');
     Route::get('/view/{id}/{code}', [JobsController::class, 'ajaxView'])->name('frontend.job.ajaxview');
+    Route::get('/get-cities/{district_id}', [JobsController::class,'getCities'])->name('get.cities');
 });
 
 Route::get('/cart', [HomeController::class, 'cartProducts'])->name('frontend.cart');
@@ -129,8 +139,12 @@ Route::prefix('/checkout')->group(function () {
 
 // Blogs Routes
 Route::prefix('/blogs')->group(function () {
-    Route::get('/', [HomeController::class, 'showArticles'])->name('frontend.home.blogs');
-    Route::get('/{slug}', [HomeController::class, 'viewArticle'])->name('frontend.blogs.article.view');
+    //Route::get('/', [HomeController::class, 'showArticles'])->name('frontend.home.blogs');
+    Route::get('/', [HomeController::class, 'blogsAll'])->name('frontend.home.blogs');
+    //Route::get('/{slug}', [HomeController::class, 'viewArticle'])->name('frontend.blog.view');
+    Route::get('/{slug}', [HomeController::class, 'viewBlog'])->name('frontend.blog.view');
+    Route::get('/tags/{slug}', [HomeController::class, 'viewTags'])->name('frontend.blog.tag');
+    Route::get('/category/{slug}', [HomeController::class, 'viewCategory'])->name('frontend.blog.category');
     //Route::get('/{slug}', [HomeController::class, 'viewNews'])->name('frontend.news.events.view');
 });
 
@@ -203,7 +217,7 @@ Route::middleware(['auth', 'candidate'])->group(function () {
         Route::post('/delete-past-employment/{user_id}',  [CandidateController::class, 'deletePastEmployement'])->name('frontend.deletepastemployement');
         
         Route::post('/check-profile-completeness/{user_id}',  [CandidateController::class, 'checkProfileCompleteness'])->name('frontend.checkprofilecompleteness');
-    
+        
     });
 });
 

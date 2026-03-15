@@ -133,6 +133,30 @@
                                         <li class="{{ request()->routeIs('frontend.contact') ? 'active' : '' }}">
                                             <a href="{{ route('frontend.contact') }}">Contact</a>
                                         </li>
+                                        @auth
+                                            @if(Auth::user()->role === 'candidate')
+                                                <li class="d-block d-lg-none {{ request()->routeIs('frontend.contact') ? 'active' : '' }} nav-item dropdown navbar_item">
+                                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                    {{ Auth::user()->name }}
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="{{ route('candidate.dashboard') }}">Dashboard</a>
+                                                    <a class="dropdown-item logout_btn" href="#">Logout</a>
+                                                    </div>
+                                                </li>
+                                            @endif
+                                        @else
+                                        <li class="d-block d-lg-none {{ request()->routeIs('frontend.userregister') ? 'active' : '' }}">
+                                            <a href="{{ route('frontend.userregister') }}"
+                                            class="nav-secondary-color">
+                                                Register
+                                            </a></li>
+                                            <li class="d-block d-lg-none {{ request()->routeIs('frontend.userlogin') ? 'active' : '' }}">
+                                            <a href="{{ route('frontend.userlogin') }}"
+                                            class="nav-secondary-color">
+                                                Login
+                                            </a></li>
+                                        @endauth        
 
                                     </ul>
                                 </nav>

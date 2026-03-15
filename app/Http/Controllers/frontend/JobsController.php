@@ -32,7 +32,7 @@ class JobsController extends Controller
     {
         $jobs = User::where('status', 1)->orderBy('created_at', 'ASC')->get();
         //$users = User::with(['detail', 'socialLinks','expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->find(Auth::id());
-       
+        $jobsCount = User::where('status', 1)->where('active', 1)->count();
         $designations = EmpDesignation::where('status',1)->get(); 
         $industries = EmpIndustry::where('status',1)->get();  
         $categories = EmpMainCategory::where('status',1)->get();  
@@ -43,7 +43,7 @@ class JobsController extends Controller
 
         $mainCategory = '';
 
-        return view('pages.frontend.jobs.index', compact('jobs', 'designations', 'industries', 'categories', 'subCategories', 'provinces', 'districts','districtCities','mainCategory'));
+        return view('pages.frontend.jobs.index', compact('jobs', 'designations', 'industries', 'categories', 'subCategories', 'provinces', 'districts','districtCities','mainCategory','jobsCount'));
     }
 
     public function viewJob($slug)
@@ -121,53 +121,85 @@ class JobsController extends Controller
     public function fetchJobs(Request $request)
     {
         $query = User::with([
-            'detail',
+            'detail.city',
             'socialLinks',
             'expectingArea',
             'userEducation',
             'schoolLevel',
             'professionalDetail',
-            'pastEmployments'
-        ])->where('status', 1)
-        ->where('role', 'candidate'); // important
+            'pastEmployments.industry',
+            'pastEmployments.designation',
+            'pastEmployments.category'
+        ])
+        ->where('status', 1)
+        ->where('active', 1)
+        ->where('role', 'candidate');
 
-        // 🔎 Filter by Province
+        //  Filter by Category
+        if ($request->filled('category_id')) {
+            $query->whereHas('pastEmployments', function ($q) use ($request) {
+                $q->whereIn('employee_category', $request->category_id);
+            });
+        }
+
+        //  Filter by Sex
+        if ($request->filled('sex')) {
+            $query->whereHas('detail', function ($q) use ($request) {
+                $q->whereIn('sex', $request->sex);
+            });
+        }
+
+        //  Filter by Province
         if ($request->filled('province_id')) {
             $query->whereHas('expectingArea', function ($q) use ($request) {
                 $q->where('province_id', $request->province_id);
             });
         }
 
-        // 🔎 Filter by District
+        //  Filter by District
         if ($request->filled('district_id')) {
-            $query->whereHas('expectingArea', function ($q) use ($request) {
+            $query->whereHas('detail.city', function ($q) use ($request) {
                 $q->where('district_id', $request->district_id);
             });
         }
 
-        // 🔎 Filter by Education
+        //  Filter by City
+        if ($request->filled('city_id')) {
+            $query->whereHas('detail', function ($q) use ($request) {
+                $q->where('city', $request->city_id);
+            });
+        }
+
+        //  Filter by Salary
+        if ($request->filled('salary_from') && $request->filled('salary_to')) {
+            $query->whereHas('expectingArea', function ($q) use ($request) {
+                $q->whereBetween('expected_salary', [
+                    $request->salary_from,
+                    $request->salary_to
+                ]);
+            });
+        }
+
+        //  Filter by Education
         if ($request->filled('education_level')) {
             $query->whereHas('userEducation', function ($q) use ($request) {
-                $q->where('level', $request->education_level);
+                $q->where('highest_education_level', $request->education_level);
             });
         }
 
-        // 🔎 Filter by Professional Category
-        if ($request->filled('category_id')) {
-            $query->whereHas('professionalDetail', function ($q) use ($request) {
-                $q->where('category_id', $request->category_id);
-            });
-        }
-
-        // 🔎 Filter by Keyword Search
+        //  Filter by Keyword Search
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->keyword . '%')
-                ->orWhere('username', 'like', '%' . $request->keyword . '%');
+                ->orWhere('username', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%');
             });
         }
 
-        $jobs = $query->orderBy('created_at', 'desc')->get();
+        $sort = $request->sort_by ?? 'DESC';
+        $jobs = $query->orderBy('created_at', $sort)->get();
+
+        //$jobs = $query->orderBy('created_at', 'desc')->get();
 
         $html = view('partials.jobs_list', compact('jobs'))->render();
 
@@ -175,5 +207,15 @@ class JobsController extends Controller
             'success' => true,
             'html' => $html
         ]);
+    }
+
+    public function getCities($district_id)
+    {
+        $cities = DistrictCity::where('district_id', $district_id)
+                    ->where('status',1)
+                    ->orderBy('name','ASC')
+                    ->get();
+
+        return response()->json($cities);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
@@ -29,11 +30,12 @@ class Handler extends ExceptionHandler
     }
     public function render($request, Throwable $exception)
     {
-        if ($this->isHttpException($exception)) {
+        if ($exception instanceof HttpExceptionInterface) {
+
             $code = $exception->getStatusCode();
             $message = $exception->getMessage() ?: 'An unexpected error occurred';
 
-            return response()->view('pages/frontend/errors/error', compact('code', 'message'), $code);
+            return response()->view('pages/frontend/errors/error', compact('code','message'), $code);
         }
 
         return parent::render($request, $exception);

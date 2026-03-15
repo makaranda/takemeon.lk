@@ -26,13 +26,19 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Size;
 use App\Models\Color;
-use App\Models\District;
 use App\Models\ProgramCategory;
 use App\Models\ProgramSubCategory;
 use App\Models\ProgramSubCategoryItem;
 use App\Models\Partner;
 use App\Models\Blog;
+use App\Models\EmpSubCategory;
+use App\Models\EmpMainCategory;
+use App\Models\EmpDesignation;
+use App\Models\EmpIndustry;
 use App\Models\Country;
+use App\Models\Province;
+use App\Models\District;
+use App\Models\DistrictCity;
 use App\Models\Link;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -69,12 +75,20 @@ class HomeController extends Controller
         $home_sec_video = Page::where('status', 1)->where('id', 34)->first();
         $random_products = Product::where('status', 1)->inRandomOrder()->take(6)->get();
         $random_blogs = Blog::where('status', 1)->inRandomOrder()->take(3)->get();
+
+        $designations = EmpDesignation::where('status',1)->get(); 
+        $industries = EmpIndustry::where('status',1)->get();  
+        $categories = EmpMainCategory::where('status',1)->get();  
+        $subCategories = EmpSubCategory::where('status',1)->get();  
+        $provinces = Province::where('status',1)->get();  
+        $districts = District::where('status',1)->get();  
+        $districtCities = DistrictCity::where('status',1)->get(); 
         //$admin = Auth::guard('admin')->user();
         //dd($admin);
         // if (!empty($admin->role) && $admin->role > 0) {
         //     return redirect()->route('admin.dashboard');
         // } else {
-        return view('pages.frontend.home.index', compact('gallery_home', 'home_sec_video',  'about_info', 'main_slider', 'according_home', 'partners_home', 'random_products', 'random_blogs'));
+        return view('pages.frontend.home.index', compact('gallery_home', 'home_sec_video',  'about_info', 'main_slider', 'according_home', 'partners_home', 'random_products', 'random_blogs','designations', 'industries', 'categories', 'subCategories', 'provinces', 'districts','districtCities'));
         //}
     }
 
@@ -845,6 +859,90 @@ class HomeController extends Controller
         return $cart_html;
     }
 
+    public function blogsAll()
+    {
+        $blogs = Blog::with('category')
+            ->where('status',1)
+            ->latest()
+            ->paginate(6);
+
+        $categories = EmpIndustry::where('status',1)->orderBy('order')->get();
+
+        $recentPosts = Blog::where('status',1)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('pages.frontend.blogs.index',compact(
+            'blogs',
+            'categories',
+            'recentPosts'
+        ));
+    }
+
+    public function viewBlog($slug)
+    {
+        // Get Blog with relationships
+        $blog = Blog::with(['author','category'])
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->where('blog_type', 'blogs-article')
+            ->firstOrFail();
+
+
+        // Blog page data (optional page content)
+        $page_blog = Page::where('slug', 'blogs')->first();
+
+
+        // Recent blogs
+        $recent_blogs = Blog::where('slug', '!=', $slug)
+            ->where('status', 1)
+            ->where('blog_type', 'blogs-article')
+            ->latest()
+            ->take(5)
+            ->get();
+
+
+        // Categories with blog count
+        $categories = EmpIndustry::withCount(['blogs' => function ($query) {
+            $query->where('status',1)
+                ->where('blog_type','blogs-article');
+        }])
+        ->where('status',1)
+        ->orderBy('order')
+        ->get();
+
+
+        // Previous blog
+        $prev_blog = Blog::where('id', '<', $blog->id)
+            ->where('status', 1)
+            ->where('blog_type', 'blogs-article')
+            ->orderBy('id', 'desc')
+            ->first();
+
+
+        // Next blog
+        $next_blog = Blog::where('id', '>', $blog->id)
+            ->where('status', 1)
+            ->where('blog_type', 'blogs-article')
+            ->orderBy('id', 'asc')
+            ->first();
+
+
+        return view(
+            'pages.frontend.blogs.single',
+            compact(
+                'blog',
+                'page_blog',
+                'recent_blogs',
+                'categories',
+                'prev_blog',
+                'next_blog'
+            )
+        );
+    }
+
+
 
     public function showArticles()
     {
@@ -908,5 +1006,7 @@ class HomeController extends Controller
         $page_blog = Page::where('slug', 'Like', 'blogs')->first();
         return view('pages.frontend.blogs.single', compact('blog', 'page_blog'));
     }
+
+
 
 }

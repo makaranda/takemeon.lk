@@ -6,6 +6,10 @@
   --fifth-color: #1b0b20;
 }
 
+.nav-secondary-color{
+  color: var(--secondary-color) !important;
+}
+
 .footer-bg {
     background: #1b0c20;
 }
@@ -76,6 +80,7 @@
 }
 
 .single-job-items {
+    width: 100%;
     &:hover{
         box-shadow: 0px 0px 10px 2px #ccc;
     }
@@ -296,3 +301,13 @@ form.search-box {
     background-color: #fff;
     font-weight: 900;
 }
+
+.job-category-listing {
+  .single-listing {
+    .select-job-items2{ 
+      .nice-select {
+        margin-bottom: 20px;
+      }
+    } 
+  }
+}     

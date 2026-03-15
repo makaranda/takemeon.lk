@@ -79,6 +79,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPastEmployment::class);
     }
+    public function latestPastEmployment()
+    {
+        return $this->hasOne(UserPastEmployment::class)->latestOfMany();
+    }
 
     public function detail()
     {

@@ -244,3 +244,7 @@ form.search-box {
 ::-webkit-scrollbar-thumb:hover {
   background: #b360ff; 
 }
+
+.price_value input {
+    max-width: 70px;
+}

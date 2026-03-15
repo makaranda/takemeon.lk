@@ -2,19 +2,31 @@
 
 @section('content')
 
-<!-- bradcam_area -->
-<div class="bradcam_area breadcam_bg_2">
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="bradcam_text text-center">
-                    <h3>Error {{ $code ?? 'Error' }}</h3>
+
+
+<!-- Hero area Start-->
+<div class="slider-area ">
+    <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="{{ url('public/assets/frontend/img/hero/about.jpg') }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2>Error {{ $code ?? 'Error' }}</h2>
+                    </div>
+                </div>
+                <div class="col-xl-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Error {{ $code ?? 'Error' }}</a></li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--/ bradcam_area -->
+<!--  Hero area End -->
 
 <!-- ================ contact section start ================= -->
 <section class="contact-section section_padding error-page">
