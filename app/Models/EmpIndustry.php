@@ -25,5 +25,9 @@ class EmpIndustry extends Model
     {
         return $this->hasMany(Blog::class, 'category_id');
     }
+    public function candidates()
+    {
+        return $this->hasMany(UserExpectingArea::class, 'job_industry');
+    }
     
 }

@@ -35,67 +35,50 @@
 <div class="row">
 
 <div class="col-lg-8 mb-5 mb-lg-0">
-<div class="blog_left_sidebar">
+    <div class="blog_left_sidebar">
+        @if($blogs)
+            @foreach($blogs as $blog)
+                <article class="blog_item">
+                    <div class="blog_item_img">
+                        <img class="card-img rounded-0"
+                        src="{{ asset('public/assets/uploads/blogs/'.$blog->feature_image) }}"
+                        alt="{{ $blog->title }}">
+                        <a href="#" class="blog_item_date">
+                            <h3>{{ $blog->created_at->format('d') }}</h3>
+                            <p>{{ $blog->created_at->format('M') }}</p>
+                        </a>
+                    </div>
+                    <div class="blog_details">
+                        <a class="d-inline-block"
+                        href="{{ route('frontend.blog.view',$blog->slug) }}">
+                            <h2>{{ $blog->title }}</h2>
+                        </a>
+                        <p>{{ $blog->sub_description }}</p>
+                        <ul class="blog-info-link">
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-user"></i>
+                                    {{ $blog->category?->name ?? 'General' }}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-comments"></i>
+                                    0 Comments
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </article>
+            @endforeach
+        @endif
 
-@foreach($blogs as $blog)
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+    {{ $blogs->links() }}
+    </div>
 
-<article class="blog_item">
-
-<div class="blog_item_img">
-
-<img class="card-img rounded-0"
-src="{{ asset('public/assets/uploads/blogs/'.$blog->feature_image) }}"
-alt="{{ $blog->title }}">
-
-<a href="#" class="blog_item_date">
-<h3>{{ $blog->created_at->format('d') }}</h3>
-<p>{{ $blog->created_at->format('M') }}</p>
-</a>
-
-</div>
-
-<div class="blog_details">
-
-<a class="d-inline-block"
-href="{{ route('frontend.blog.view',$blog->slug) }}">
-
-<h2>{{ $blog->title }}</h2>
-
-</a>
-
-<p>{{ $blog->sub_description }}</p>
-
-<ul class="blog-info-link">
-
-<li>
-<a href="#">
-<i class="fa fa-user"></i>
-{{ $blog->category?->name ?? 'General' }}
-</a>
-</li>
-
-<li>
-<a href="#">
-<i class="fa fa-comments"></i>
-0 Comments
-</a>
-</li>
-
-</ul>
-
-</div>
-
-</article>
-
-@endforeach
-
-
-<!-- Pagination -->
-<div class="d-flex justify-content-center">
-{{ $blogs->links() }}
-</div>
-
-</div>
+    </div>
 </div>
 
 

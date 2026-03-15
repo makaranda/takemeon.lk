@@ -61,7 +61,6 @@
                                 <li><a href="{{ route('frontend.privacypolicy') }}">Privacy Policy</a></li>
                                 <li><a href="{{ route('frontend.faq') }}">FAQ</a></li>
                                 <li><a href="{{ route('frontend.home.blogs') }}">Blogs</a></li>
-                                <li><a href="{{ route('frontend.home.products') }}">Products</a></li>
                             </ul>
                         </div>
                     </div>

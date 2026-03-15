@@ -2,7 +2,24 @@
 
 @section('content')
 
-
+@php
+    $icons = [
+    'accounting-and-finance' => 'flaticon-report',
+    'automobiles' => 'flaticon-car',
+    'agriculture-and-food-processing' => 'flaticon-wheat',
+    'civil-and-construction' => 'flaticon-helmet',
+    'it-and-telecommunications' => 'flaticon-high-tech',
+    'real-estate' => 'flaticon-real-estate',
+    'healthcare' => 'flaticon-doctor',
+    'digital-marketing' => 'flaticon-content',
+    'consulting' => 'flaticon-tour',
+    'bpo-kpo' => 'flaticon-report',
+    'banking-and-financial-services' => 'flaticon-real-estate',
+    'administration' => 'flaticon-content',
+    'automobiles' => 'flaticon-high-tech',
+    'agriculture-and-food-processing' => 'flaticon-curriculum-vitae'
+    ];
+@endphp
 <!-- slider Area Start-->
         <div class="slider-area ">
             <!-- Mobile Menu -->
@@ -64,107 +81,46 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-tittle text-center">
-                            <span>FEATURED TOURS Packages</span>
+                            <span>FEATURED Packages</span>
                             <h2>Browse Top Categories </h2>
                         </div>
                     </div>
                 </div>
                 <div class="row d-flex justify-contnet-center">
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-tour"></span>
+
+                    @if ($industries_lists->count() > 0)
+                        @foreach ($industries_lists as $industries_list)
+                            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                                <div class="single-services text-center mb-30">
+                                    <div class="services-ion">
+                                        <span class="{{ $icons[$industries_list->slug] ?? 'flaticon-briefcase' }}"></span>
+                                    </div>
+                                    <div class="services-cap">
+                                        <h5>
+                                            @if ($industry->candidates_count > 0)
+                                                <a href="{{ route('frontend.job.category', $industries_list->slug) }}">
+                                                    {{ $industries_list->name }}
+                                                </a>
+                                            @else
+                                                <a data-id="{{ $industries_list->name }}" class="msg_no_category cursor-pointer">
+                                                    {{ $industries_list->name }}
+                                                </a>
+                                            @endif
+                                            
+                                        </h5>
+                                        <span>{{ $industry->candidates_count > 0 ? '(' . $industry->candidates_count . ')' : '' }}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Design & Creative</a></h5>
-                                <span>(653)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-cms"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Design & Development</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-report"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Sales & Marketing</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-app"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Mobile Application</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-helmet"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Construction</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-high-tech"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Information Technology</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-real-estate"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Real Estate</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-services text-center mb-30">
-                            <div class="services-ion">
-                                <span class="flaticon-content"></span>
-                            </div>
-                            <div class="services-cap">
-                               <h5><a href="job_listing">Content Writer</a></h5>
-                                <span>(658)</span>
-                            </div>
-                        </div>
-                    </div>
+                        @endforeach
+                    @endif
                 </div>
                 <!-- More Btn -->
                 <!-- Section Button -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="browse-btn2 text-center mt-50">
-                            <a href="job_listing" class="border-btn2">Browse All Sectors</a>
+                            <a href="{{ route('frontend.home.jobs') }}" class="border-btn2">Browse All Sectors</a>
                         </div>
                     </div>
                 </div>
@@ -177,9 +133,9 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-10">
                         <div class="cv-caption text-center">
-                            <p class="pera1">FEATURED TOURS Packages</p>
+                            <p class="pera1">FEATURED Packages</p>
                             <p class="pera2"> Make a Difference with Your Online Resume!</p>
-                            <a href="#" class="border-btn2 border-btn4">Upload your cv</a>
+                            <a href="{{ route('frontend.userregister') }}" class="border-btn2 border-btn4">Upload your cv</a>
                         </div>
                     </div>
                 </div>
@@ -201,85 +157,41 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-10">
                         <!-- single-job-content -->
-                        <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details"><img src="{{ url('public/assets/frontend/img/icon/job-list1.png') }}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>Rs 3500 - Rs 4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
-                        <!-- single-job-content -->
-                        <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details"><img src="{{ url('public/assets/frontend/img/icon/job-list2.png') }}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>Rs 3500 - Rs 4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
+                        @if ($jobs->count() > 0)
+                            @foreach ($jobs as $job)
+                                <div class="single-job-items mb-30">
+                                    <div class="job-items">
+                                        <div class="company-img">
+                                            <a href="{{ route('frontend.job.view', $job->slug) }}">
+                                                <img src="{{ asset('public/assets/frontend/candidates/' . ($job->detail?->profile_img ?? 'user_profile.png')) }}" alt="{{ $job->name }}">
+                                            </a>
+                                        </div>
+                                        <div class="job-tittle">
+                                            <a href="{{ route('frontend.job.view', $job->slug) }}"><h4>{{ $job->name }}</h4></a>
+                                            <ul>
+                                                <li>{{ $job->latestPastEmployment?->company_name ?? 'Company Not Available' }}</li>
+                                                <li><i class="fas fa-map-marker-alt"></i>{{ $job->detail?->city?->name ?? 'Sri Lanka' }}</li>
+                                                <li>
+                                                    @php
+                                                        $salary = $job->expectingArea?->expected_salary;
+                                                    @endphp
+                                                    @if ($salary && $salary > 0)
+                                                        Rs {{ number_format($salary) }}
+                                                    @else
+                                                        Salary Negotiable
+                                                    @endif
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="items-link f-right">
+                                        <a href="{{ route('frontend.job.view', $job->slug) }}">{{ $job->expectingArea?->job_type ?? 'Full Time' }}</a>
+                                        <span>{{ $job->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>     
+                            @endforeach
+                        @endif
                          <!-- single-job-content -->
-                        <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details"><img src="{{ url('public/assets/frontend/img/icon/job-list3.png') }}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>Rs 3500 - Rs 4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
-                         <!-- single-job-content -->
-                        <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details"><img src="{{ url('public/assets/frontend/img/icon/job-list4.png') }}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>Rs 3500 - Rs 4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -414,7 +326,7 @@
                             <div class="support-caption">
                                 <p class="pera-top">Mollit anim laborum duis au dolor in voluptate velit ess cillum dolore eu lore dsu quality mollit anim laborumuis au dolor in voluptate velit cillum.</p>
                                 <p>Mollit anim laborum.Duis aute irufg dhjkolohr in re voluptate velit esscillumlore eu quife nrulla parihatur. Excghcepteur signjnt occa cupidatat non inulpadeserunt mollit aboru. temnthp incididbnt ut labore mollit anim laborum suis aute.</p>
-                                <a href="about" class="btn post-btn">Post a job</a>
+                                <a href="{{ route('frontend.about') }}" class="btn post-btn">Who we Are</a>
                             </div>
                         </div>
                     </div>
@@ -444,44 +356,30 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6">
-                        <div class="home-blog-single mb-30">
-                            <div class="blog-img-cap">
-                                <div class="blog-img">
-                                    <img src="{{ url('public/assets/frontend/img/blog/home-blog1.jpg') }}" alt="">
-                                    <!-- Blog date -->
-                                    <div class="blog-date text-center">
-                                        <span>24</span>
-                                        <p>Now</p>
+                    @if ($blogs->count() > 0)
+                        @foreach ($blogs as $blog)
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <div class="home-blog-single mb-30">
+                                    <div class="blog-img-cap">
+                                        <div class="blog-img">
+                                            <img src="{{ asset('public/assets/uploads/blogs/'.$blog->feature_image) }}" alt="">
+                                            <!-- Blog date -->
+                                            <div class="blog-date text-center">
+                                                <span>{{ $blog->created_at->format('d') }}</span>
+                                                <p>{{ $blog->created_at->format('M') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="blog-cap">
+                                            <p>{{ $blog->category?->name ?? 'General' }}</p>
+                                            <h3><a href="{{ route('frontend.blog.view',$blog->slug) }}">{{ $blog->title }}</a></h3>
+                                            <a href="{{ route('frontend.blog.view',$blog->slug) }}" class="more-btn">Read more »</a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="blog-cap">
-                                    <p>|   Properties</p>
-                                    <h3><a href="single-blog">Footprints in Time is perfect House in Kurashiki</a></h3>
-                                    <a href="#" class="more-btn">Read more »</a>
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6">
-                        <div class="home-blog-single mb-30">
-                            <div class="blog-img-cap">
-                                <div class="blog-img">
-                                    <img src="{{ url('public/assets/frontend/img/blog/home-blog2.jpg') }}" alt="">
-                                    <!-- Blog date -->
-                                    <div class="blog-date text-center">
-                                        <span>24</span>
-                                        <p>Now</p>
-                                    </div>
-                                </div>
-                                <div class="blog-cap">
-                                    <p>|   Properties</p>
-                                    <h3><a href="single-blog">Footprints in Time is perfect House in Kurashiki</a></h3>
-                                    <a href="#" class="more-btn">Read more »</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        @endforeach
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -563,6 +461,19 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
         $(document).ready(function() {
+            
+            $('.msg_no_category').on('click',function(){
+                let getName = $(this).attr('data-id');
+                console.log('Cat Name: '+getName);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Warning',
+                    text: "There are no any candidate registered Under This category "+getName+", Then you can not visit this category.",
+                    timer: 12000,
+                    position: "bottom-end",
+                    showConfirmButton: false
+                });
+            });
 
             $('#select_industry').select2({
                 placeholder: "Select Industry",

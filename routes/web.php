@@ -214,7 +214,7 @@ Route::middleware(['auth', 'candidate'])->group(function () {
         Route::post('/check-past-employment/{user_id}',  [CandidateController::class, 'checkPastEmployement'])->name('frontend.checkpastemployement');
         Route::post('/add-past-employment',  [CandidateController::class, 'addPastEmployement'])->name('frontend.addpastemployement');
         Route::post('/update-past-employment/{user_id}',  [CandidateController::class, 'updatePastEmployement'])->name('frontend.updatepastemployement');
-        Route::post('/delete-past-employment/{user_id}',  [CandidateController::class, 'deletePastEmployement'])->name('frontend.deletepastemployement');
+        Route::get('/delete-past-employment/{user_id}',  [CandidateController::class, 'deletePastEmployement'])->name('frontend.deletepastemployement');
         
         Route::post('/check-profile-completeness/{user_id}',  [CandidateController::class, 'checkProfileCompleteness'])->name('frontend.checkprofilecompleteness');
         

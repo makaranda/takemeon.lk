@@ -41,6 +41,7 @@ use App\Models\District;
 use App\Models\DistrictCity;
 use App\Models\Link;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\OrderItem;
 use App\Models\ShippingCharge;
 //use App\Observers\VisitorCountObserver;
@@ -78,17 +79,20 @@ class HomeController extends Controller
 
         $designations = EmpDesignation::where('status',1)->get(); 
         $industries = EmpIndustry::where('status',1)->get();  
+        $industries_lists = EmpIndustry::where('status',1)->withCount('candidates')->take(8)->get();  
         $categories = EmpMainCategory::where('status',1)->get();  
         $subCategories = EmpSubCategory::where('status',1)->get();  
         $provinces = Province::where('status',1)->get();  
         $districts = District::where('status',1)->get();  
         $districtCities = DistrictCity::where('status',1)->get(); 
+        $blogs = Blog::where('status',1)->latest()->take(2)->get();
+        $jobs = User::where('status', 1)->where('active', 1)->where('role', 'candidate')->latest()->take(4)->get();
         //$admin = Auth::guard('admin')->user();
         //dd($admin);
         // if (!empty($admin->role) && $admin->role > 0) {
         //     return redirect()->route('admin.dashboard');
         // } else {
-        return view('pages.frontend.home.index', compact('gallery_home', 'home_sec_video',  'about_info', 'main_slider', 'according_home', 'partners_home', 'random_products', 'random_blogs','designations', 'industries', 'categories', 'subCategories', 'provinces', 'districts','districtCities'));
+        return view('pages.frontend.home.index', compact('gallery_home', 'blogs','jobs','home_sec_video', 'industries_lists', 'about_info', 'main_slider', 'according_home', 'partners_home', 'random_products', 'random_blogs','designations', 'industries', 'categories', 'subCategories', 'provinces', 'districts','districtCities'));
         //}
     }
 

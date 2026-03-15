@@ -311,3 +311,42 @@ form.search-box {
     } 
   }
 }     
+
+.job-category-listing .single-listing .select-job-items2 .nice-select.open .list {
+    width: 100%;
+    border-radius: 0;
+    border: 0;
+    position: absolute;
+    overflow-y: scroll;
+    height: 200px;
+}
+
+.nice-select {
+    -webkit-tap-highlight-color: transparent;
+    background-color: #fff;
+    border-radius: 5px;
+    border: solid 1px #ced4da;
+    box-sizing: border-box;
+    clear: both;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-family: "Muli", sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    height: 40px;
+    line-height: 26px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 26px;
+    position: relative;
+    text-align: left !important;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+}

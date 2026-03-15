@@ -1565,8 +1565,7 @@
             });
         });
 
-    </script>
-    <script>
+
         
             $(document).on('click', '.past_emp_details', function () {   
                 var user_id = $(this).data('userid'); 
@@ -1758,8 +1757,6 @@
             });
 
             $(document).on('click','#delete_pastemp',function(){
-                
-
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "This record will be permanently deleted!",
@@ -1775,33 +1772,38 @@
                         let userId = $(this).data('userid');
                         console.log('Emp ID '+empId+' User ID '+userId);
                         let deleteUrl = "{{ route('frontend.deletepastemployement', ':id') }}";
-                        deleteUrl = deleteUrl.replace(':id', empId);
+                        deleteUrl = deleteUrl.replace(':id', userId);
+                        //{{ route('frontend.deletepastemployement','empId') }}
 
                         $.ajax({
-                            url: '{{ route('frontend.deletepastemployement','empId') }}', 
-                            type: 'POST',
+                            url: deleteUrl, 
+                            type: 'GET',
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr('content'),
-                                user_id: userId
+                                user_id: userId,
+                                emp_id: empId
                             },
                             success: function (response) {
-
-                                // Swal.fire(
-                                //     icon: 'success',
-                                //     title: 'Deleted!',
-                                //     position: "bottom-end",
-                                //     text: 'Past Employement Record has been deleted.'
-                                // );
+                                fetchPastEmployement();
+                                $('#formModalRooute').modal('hide');
+                                
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    position: "bottom-end",
+                                    text: 'Past Employement Record has been deleted.'
+                                });
 
                                 // remove row from UI (optional)
                                 // $('#row_'+empId).remove();
                             },
                             error: function () {
-                                Swal.fire(
-                                    'Error!',
-                                    'Something went wrong.',
-                                    'error'
-                                );
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    position: "bottom-end",
+                                    text: 'Something went wrong.'
+                                });
                             }
                         });
 

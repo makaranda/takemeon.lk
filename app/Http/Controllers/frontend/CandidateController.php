@@ -848,7 +848,7 @@ class CandidateController extends Controller
             ], 403);
         }
 
-        $emp_id = $request->id;
+        $emp_id = $request->emp_id;
 
             $employment = UserPastEmployment::where('id', $emp_id)
                             ->where('user_id', $user_id)
