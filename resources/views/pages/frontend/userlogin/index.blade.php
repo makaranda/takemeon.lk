@@ -134,7 +134,7 @@
                     </button>
 
                     <div class="text-center">
-                        <a href="#" class="btn-link">
+                        <a href="javascript:void(0)" class="btn-link cursor-pointer" id="btn_forgetpwd">
                             Forgot password?
                         </a>
                     </div>
@@ -254,7 +254,244 @@
 
 @push('scripts')
     <script>
+        function FormModelDetails(title, body, cancel, ok = '', page_id = 0, action = null, method = 'POST') {
+            $('#formModelLabel').text(title);
+            $('#formModelBody').html(body);
+            $('#formModelBtnCalcel').text(cancel);
+            if (ok !== '') {
+                $('#formModelBtnOk').text(ok).show();
+            } else {
+                $('#formModelBtnOk').hide();
+            }
+            $('#formPageId').val(page_id);
+            $('#formModel form').attr('action', action);
+            $('#formModel form').attr('method', method);
+            console.log("Form Modal Open");
+            var myFormModal = new bootstrap.Modal(document.getElementById('formModel'));
+            myFormModal.show();
+        }
+
         $(document).ready(function() {
+            let step = 1;
+            $('#btn_forgetpwd').on('click',function(){
+                console.log('Click Button');
+               
+                let htmlElement = `<div class="row">
+                                      <div class="col-12 col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control custom-input" placeholder="Enter Your Email or Username" name="username">
+                                        </div>
+                                      </div>
+                                   </div>`;                 
+
+                FormModelDetails('Forget Password', htmlElement, 'Cancel', 'Next', 0, '', 'POST');
+                            
+            });
+
+            $('#formModalRooute').submit(function(e){
+
+                e.preventDefault();
+
+                var formData = $(this).serialize();
+                var user_id = $('#formPageId').val();
+
+                if(step === 1){
+
+                    $.ajax({
+
+                        url: '{{ route("forgot.password") }}',
+                        method: 'POST',
+                        data: formData,
+
+                        success: function (res) {
+
+                            if(res.status === 'otp_sent'){
+
+                                let htmlElement = `<div class="row">
+                                    <div class="col-12 col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control custom-input"
+                                            placeholder="Enter OTP" name="otp">
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                                $('#formPageId').val(res.user_id);
+                                step = 2;
+
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: "OTP sent successfully!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'Ok'
+                                }).then((result) => {
+
+                                    FormModelDetails(
+                                        'OTP Verification',
+                                        htmlElement,
+                                        'Cancel',
+                                        'Next',
+                                        res.user_id,
+                                        '',
+                                        'POST'
+                                    );
+
+                                });
+
+                            }else{
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    position: "bottom-end",
+                                    text: res.message
+                                });
+
+                            }
+
+                        },
+
+                        error: function (xhr) {
+
+                            alert(xhr.responseJSON?.message || 'Step 1 - Something went wrong!');
+
+                        }
+
+                    });
+
+                }
+
+
+                /*
+                STEP 2
+                */
+
+                else if(step === 2){
+
+                    $.ajax({
+
+                        url: '{{ route("verify.resetotp") }}',
+                        method: 'POST',
+                        data: formData + '&user_id=' + user_id,
+
+                        success: function (res) {
+
+                            if(res.status === 'verified'){
+
+                                let htmlElement = `<div class="row">
+                                    <div class="col-12 col-md-12">
+                                        <div class="form-group">
+                                            <input type="password" class="form-control custom-input"
+                                            placeholder="Enter New Password" name="newpassword">
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                                step = 3;
+
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: "Please enter your new password!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'Ok'
+                                }).then((result) => {
+
+                                    FormModelDetails(
+                                        'New Password',
+                                        htmlElement,
+                                        'Cancel',
+                                        'Submit',
+                                        user_id,
+                                        '',
+                                        'POST'
+                                    );
+
+                                });
+
+                            }else{
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    position: "bottom-end",
+                                    text: res.message
+                                });
+
+                            }
+
+                        },
+
+                        error: function (xhr) {
+
+                            alert(xhr.responseJSON?.message || 'Step 2 - Something went wrong!');
+
+                        }
+
+                    });
+
+                }
+
+
+                /*
+                STEP 3
+                */
+
+                else if(step === 3){
+
+                    $.ajax({
+
+                        url: '{{ route("reset.password") }}',
+                        method: 'POST',
+                        data: formData + '&user_id=' + user_id,
+
+                        success: function (res) {
+
+                            if(res.status === 'success'){
+
+                                $('#formPageId').val('');
+
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: "Password reset successfully!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'Ok'
+                                }).then((result) => {
+
+                                    location.reload();
+
+                                });
+
+                            }else{
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    position: "bottom-end",
+                                    text: res.message
+                                });
+
+                            }
+
+                        },
+
+                        error: function (xhr) {
+
+                            alert(xhr.responseJSON?.message || 'Step 3 - Something went wrong!');
+
+                        }
+
+                    });
+
+                }
+
+            }); 
+
             // Increase quantity
             $('.input-number-increment').click(function () {
                 let id = $(this).data('id');

@@ -202,7 +202,7 @@
                                                         name="dob"
                                                         id="dob"
                                                         class="form-control custom-input"
-                                                        value="{{ old('dob', default: $user->detail->dob) }}"
+                                                        value="{{ old('dob', isset($user->detail->dob) ? \Carbon\Carbon::parse($user->detail->dob)->format('d M Y') : '') }}"
                                                         placeholder="Select DOB"
                                                         autocomplete="off">
 
@@ -246,21 +246,29 @@
                                                 <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number',Auth::user()->phone) }}" name="phone_number" class="form-control custom-input">
                                                 <small class="text-danger error-text phone_number_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-6">
+                                            <div class="form-group col-12 col-md-6"></div>
+                                            <div class="form-group col-12 col-md-12">
+                                                <div class="mb-3 text-danger">Need to update username or password</div>
+                                                <input type="checkbox" name="update_credentials" data-toggle="toggle" data-size="sm" data-on="Yes" data-off="No" data-toggle="toggle" id="checkToggle" data-size="sm">
+                                            </div>
+
+                                            <div class="form-group col-12 col-md-6 d-none checkForm">
                                                 <label>Username</label>
                                                 <input type="text" placeholder="Enter Username" value="{{ old('username',Auth::user()->username) }}" name="username" class="form-control custom-input">
                                                 <small class="text-danger error-text username_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-6">
+                                            <div class="form-group col-12 col-md-6 d-none checkForm"></div>
+                                            <div class="form-group col-12 col-md-6 d-none checkForm">
                                                 <label>New Password</label>
                                                 <input type="password" placeholder="Enter New Password" name="password" class="form-control custom-input">
                                                 <small class="text-danger error-text password_error"></small>
                                             </div>
-                                            <div class="form-group col-12 col-md-6">
+                                            <div class="form-group col-12 col-md-6 d-none checkForm">
                                                 <label>Confirm Password</label>
                                                 <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control custom-input">
                                                 <small class="text-danger error-text confirm_password_error"></small>
                                             </div>
+
                                             </div>
                                     </div>
                                 </div>
@@ -269,15 +277,20 @@
                                 <p>Add your Social Links to here.</p>
 
                                 <div class="row">
-                                    <div class="form-group col-12 col-md-6">
+                                    <div class="form-group col-12 col-md-12">
                                         <label>Facebook Link</label>
                                         <input type="text" placeholder="Enter Facebook Link" value="{{ old('facebook_link',optional($user->socialLinks)->facebook_link) }}" name="facebook_link" class="form-control custom-input">
                                         <small class="text-danger error-text facebook_link_error"></small>
                                     </div>
-                                    <div class="form-group col-12 col-md-6">
+                                    <div class="form-group col-12 col-md-12">
                                         <label>LinkedIn Link</label>
                                         <input type="text" placeholder="Enter LinkedIn Link" value="{{ old('linkedin_link',optional($user->socialLinks)->linkedin_link) }}" name="linkedin_link" class="form-control custom-input">
                                         <small class="text-danger error-text linkedin_link_error"></small>
+                                    </div>
+                                    <div class="form-group col-12 col-md-12">
+                                        <label>Github Link</label>
+                                        <input type="text" placeholder="Enter Github Link" value="{{ old('github_link',optional($user->socialLinks)->github_link) }}" name="github_link" class="form-control custom-input">
+                                        <small class="text-danger error-text github_link_error"></small>
                                     </div>
                                     <div class="form-group col-12 col-md-12 text-right mt-3">
                                         <button type="submit" class="btn btn-login btn-block mb-3" id="updateProfileBtn">Update Profile</button>
@@ -302,24 +315,52 @@
                                                 <form action="{{ route('frontend.userexpectingdetails.update',Auth::user()->id) }}" method="POST" id="expectingUpdateForm">
                                                     @csrf
                                                     <div class="row">
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Job Industry</label>
-                                                            <input type="text" placeholder="Enter Job Industry" value="{{ old('job_industry',optional($user->expectingArea)->job_industry) }}" name="job_industry" class="form-control custom-input">
+                                                            <select class="" name="job_industry" id="job_industry">
+                                                                <option value="">Select Industry</option>
+                                                                @if($emp_industries)
+                                                                    @foreach ($emp_industries as $industry)
+                                                                        <option value="{{ $industry->slug }}" {{ old('job_industry', optional($user->expectingArea)->job_industry) == $industry->slug ? 'selected' : '' }}> {{ $industry->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text job_industry_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Job Type</label>
-                                                            <input type="text" placeholder="Enter Job Type" value="{{ old('job_type',optional($user->expectingArea)->job_type) }}" name="job_type" class="form-control custom-input">
+                                                            <select class="" name="job_type" id="job_type">
+                                                                <option value="">Select Job Type</option>
+                                                                @if($emp_main_categories)
+                                                                    @foreach ($emp_main_categories as $job_type)
+                                                                        <option value="{{ $job_type->slug }}" {{ old('job_type', optional($user->expectingArea)->job_type) == $job_type->slug ? 'selected' : '' }}> {{ $job_type->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text job_type_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Job Role</label>
-                                                            <input type="text" placeholder="Enter Job Role" value="{{ old('job_role',optional($user->expectingArea)->job_role) }}" name="job_role" class="form-control custom-input">
+                                                            <select class="" name="job_role" id="job_role">
+                                                                <option value="">Select Job Role</option>
+                                                                @if($emp_sub_categories)
+                                                                    @foreach ($emp_sub_categories as $job_role)
+                                                                        <option value="{{ $job_role->slug }}" {{ old('job_role', optional($user->expectingArea)->job_role) == $job_role->slug ? 'selected' : '' }}> {{ $job_role->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text job_role_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Designation</label>
-                                                            <input type="text" placeholder="Enter designation" value="{{ old('designation',optional($user->expectingArea)->designation) }}" name="designation" class="form-control custom-input">
+                                                            <select class="" name="designation" id="designation">
+                                                                <option value="">Select Designation</option>
+                                                                @if($emp_designations)
+                                                                    @foreach ($emp_designations as $designation)
+                                                                        <option value="{{ $designation->slug }}" {{ old('designation', optional($user->expectingArea)->designation) == $designation->slug ? 'selected' : '' }}> {{ $designation->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text username_error"></small>
                                                         </div>
                                                         <div class="form-group col-12 col-md-12 text-right mt-3">
@@ -473,9 +514,20 @@
                                                             <input type="number" placeholder="Enter Total Years Experience" value="{{ old('total_years_experience',optional($user->professionalDetail)->total_years_experience) }}" name="total_years_experience" class="form-control custom-input">
                                                             <small class="text-danger error-text total_years_experience_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
-                                                            <label>Skills Summary</label>
-                                                            <input type="text" placeholder="Enter Skills Summary" value="{{ old('skills_summary',optional($user->professionalDetail)->skills_summary) }}" name="skills_summary" class="form-control custom-input">
+                                                        <div class="form-group col-12 col-md-12">
+                                                            <label>Skills Summary <span class="font-weight-bold text-danger">use this format : information,technology</span></label>
+                                                            <input type="text"
+                                                                id="skills_summary"
+                                                                name="skills_summary"
+                                                                class="form-control custom-input"
+                                                                placeholder="Enter Skills Summary"
+                                                                value="{{ old('skills_summary', 
+                                                                    optional($user->professionalDetail)->skills_summary 
+                                                                    ? collect(explode(',', optional($user->professionalDetail)->skills_summary))
+                                                                        ->map(fn($item) => ['value' => $item])
+                                                                        ->toJson()
+                                                                    : ''
+                                                                ) }}">
                                                             <small class="text-danger error-text skills_summary_error"></small>
                                                         </div>
                                                         <div class="form-group col-12 col-md-12">
@@ -593,8 +645,17 @@
 
 @push('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+   
+
 
     <style>
+        .toggle.btn.btn-primary.btn-sm {
+            border: 1px solid #000;
+        }
+        .toggle.btn.btn-sm.btn-light.off{
+           border: 1px solid #000; 
+        }
+
         #v-pills-tabContent {
             border-top: 1px solid #ad8bb7;
             padding-top: 14px;
@@ -776,16 +837,98 @@
             color: #fff !important;
             text-transform: capitalize;
         }
+
+        .select-form {
+            .nice-select{
+                display: none;
+            }
+            .select2-container{
+                .selection{
+                    .select2-selection--single {
+                        .select2-selection__rendered{
+                            align-content: center;
+                        }
+                        .select2-selection__arrow{
+                        }
+                    }
+                }
+            }
+        }
         
     </style>
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+
 @endpush
 
 @push('scripts')
-
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <!-- Tagify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var input = document.querySelector('#skills_summary');
+
+            new Tagify(input, {
+                delimiters: ",",   
+                trim: true,
+                duplicates: false,
+                maxTags: 20,
+                dropdown: {
+                    enabled: 0
+                }
+            });
+        });
+    </script>
+
+    <script>
+
         $(document).ready(function () {
+
+            $('#job_industry').select2({
+                placeholder: "Select Industry",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#designation').select2({
+                placeholder: "Select Designation",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#job_role').select2({
+                placeholder: "Select Job Role",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#job_type').select2({
+                placeholder: "Select Job Type",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#checkToggle').change(function(){
+
+                if($(this).prop('checked')){
+
+                    $('.checkForm').removeClass('d-none');
+
+                }else{
+
+                    $('.checkForm').addClass('d-none');
+
+                }
+
+            });
+
+
             $('.profile-wrapper').click(function () {
                 $('#profileInput').click();
             });
@@ -887,9 +1030,10 @@
                         // Update values dynamically
                         $('input[name="full_name"]').val(response.data.name);
                         $('input[name="email"]').val(response.data.email);
-                        $('input[name="address"]').val(response.data.address);
-                        $('input[name="dob"]').val(response.data.dob);
-                        $('input[name="nic"]').val(response.data.nic);
+                        $('input[name="address"]').val(response.data.detail.address);
+                        $('input[name="dob"]').val(response.data.detail.dob);
+                        $('input[name="nic"]').val(response.data.detail.nic);
+                        $('input[name="sex"]').val(response.data.detail.sex).change();
                         $('input[name="username"]').val(response.data.username);
                         $('input[name="phone_number"]').val(response.data.phone);
 
@@ -924,10 +1068,11 @@
             });
 
             $('#dob').datepicker({
-                format: 'yyyy-mm-dd',
+                format: 'dd M yyyy',
                 autoclose: true,
-                endDate: new Date(), // prevent future dates
-                todayHighlight: true
+                endDate: new Date(),
+                todayHighlight: true,
+                startView: 2
             });
             // Click icon to open
             $('#dob').siblings('.input-group-append').click(function () {
@@ -1168,7 +1313,23 @@
 
                 let form = $('#professionalUpdateForm');
                 let url = form.attr('action');
-                let formData = form.serialize();
+                //let formData = form.serialize();
+                let formData = new FormData(form[0]);
+                var tagify;
+                document.addEventListener('DOMContentLoaded', function () {
+                    var input = document.querySelector('#skills_summary');
+
+                    tagify = new Tagify(input, {
+                        delimiters: ",",
+                        trim: true,
+                        duplicates: false,
+                        maxTags: 20
+                    });
+                });
+
+                if (tagify && tagify.value) {
+                    formData.set('skills_summary', JSON.stringify(tagify.value));
+                }
 
                 // Clear old errors
                 $('.error-text').text('');
@@ -1178,6 +1339,8 @@
                     url: url,
                     type: "POST",
                     data: formData,
+                    processData: false,
+                    contentType: false,
                     beforeSend: function () {
                         $('#updateProfessionalBtn').prop('disabled', true);
                     },
@@ -1198,7 +1361,7 @@
 
                         // Update values dynamically
                         $('input[name="total_years_experience"]').val(response.data.total_years_experience);
-                        $('input[name="skills_summary"]').val(response.data.skills_summary);
+                        //$('input[name="skills_summary"]').val(response.data.skills_summary);
                         $('textarea[name="about_yourself"]').val(response.data.about_yourself);
                         $('input[name="current_employer"]').val(response.data.current_employer);
                         $('input[name="current_industry"]').val(response.data.current_industry);
@@ -1208,6 +1371,19 @@
                         $('input[name="notice_period_days"]').val(response.data.notice_period_days);
                         $('textarea[name="about_current_role"]').val(response.data.about_current_role);
                         $('input[name="current_salary"]').val(response.data.current_salary);
+
+                        if (tagify) {
+                            if (response.data.skills_summary) {
+                                let skillsArray = response.data.skills_summary
+                                    .split(',')
+                                    .map(item => ({ value: item.trim() }));
+
+                                tagify.removeAllTags();
+                                tagify.addTags(skillsArray);
+                            } else {
+                                tagify.removeAllTags();
+                            }
+                        }
 
                     },
                     error: function (xhr) {
@@ -1239,13 +1415,80 @@
             $('#started_in').datepicker({
                 format: 'yyyy-mm-dd',
                 autoclose: true,
-                endDate: new Date(), // prevent future dates
-                todayHighlight: true
+                endDate: new Date(),
+                todayHighlight: true,
+                startView: 2
             });
 
             // Click icon to open
             $('#started_in').siblings('.input-group-append').click(function () {
                 $('#started_in').datepicker('show');
+            });
+
+            
+            $(document).on('click','#delete_pastemp',function(){
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This record will be permanently deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        let empId  = $(this).data('empid');
+                        let userId = $(this).data('userid');
+                        console.log('Emp ID '+empId+' User ID '+userId);
+                        let deleteUrl = "{{ route('frontend.deletepastemployement', ':id') }}";
+                        deleteUrl = deleteUrl.replace(':id', userId);
+                        //{{ route('frontend.deletepastemployement','empId') }}
+
+                        $.ajax({
+                            url: deleteUrl, 
+                            type: 'GET',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                user_id: userId,
+                                emp_id: empId
+                            },
+                            success: function (response) {
+                                let form = $('#formModalRooute');
+                                $('#formModelBtnOk').prop('disabled', false);
+
+                                fetchPastEmployement();
+                                checkProfileCompleteness();
+
+                                // Proper reset
+                                form[0].reset();
+
+                                // Hide modal properly
+                                $('#formModel').modal('hide');
+                                
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    position: "bottom-end",
+                                    text: 'Past Employement Record has been deleted.'
+                                });
+
+                                // remove row from UI (optional)
+                                // $('#row_'+empId).remove();
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    position: "bottom-end",
+                                    text: 'Something went wrong.'
+                                });
+                            }
+                        });
+
+                    }
+                });
             });
 
             $('#formModelBtnOk').on('click', function (e) {
@@ -1756,60 +1999,6 @@
 
             });
 
-            $(document).on('click','#delete_pastemp',function(){
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "This record will be permanently deleted!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-
-                    if (result.isConfirmed) {
-                        let empId  = $(this).data('empid');
-                        let userId = $(this).data('userid');
-                        console.log('Emp ID '+empId+' User ID '+userId);
-                        let deleteUrl = "{{ route('frontend.deletepastemployement', ':id') }}";
-                        deleteUrl = deleteUrl.replace(':id', userId);
-                        //{{ route('frontend.deletepastemployement','empId') }}
-
-                        $.ajax({
-                            url: deleteUrl, 
-                            type: 'GET',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content'),
-                                user_id: userId,
-                                emp_id: empId
-                            },
-                            success: function (response) {
-                                fetchPastEmployement();
-                                $('#formModalRooute').modal('hide');
-                                
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    position: "bottom-end",
-                                    text: 'Past Employement Record has been deleted.'
-                                });
-
-                                // remove row from UI (optional)
-                                // $('#row_'+empId).remove();
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    position: "bottom-end",
-                                    text: 'Something went wrong.'
-                                });
-                            }
-                        });
-
-                    }
-                });
-            });
 
             $(document).on('click','.add_past_employment',function(){
                 var user_id = $(this).data('id'); 

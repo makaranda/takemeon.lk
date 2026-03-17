@@ -60,6 +60,8 @@ use App\Models\Province;
 use App\Models\District;
 use App\Models\DistrictCity;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class CandidateController extends Controller
 {
@@ -268,20 +270,31 @@ class CandidateController extends Controller
     {
         $user = User::findOrFail($user_id);
 
-        $request->validate([
+        $rules = [
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone_number' => 'required|string|max:20',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            //'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'dob' => 'nullable|date',
             'nic' => 'nullable|string|max:14',
             'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:6',
-            'confirm_password' => 'nullable|string|same:password',
+            //'password' => 'nullable|string|min:6',
+            //'confirm_password' => 'nullable|string|same:password',
 
             'facebook_link' => 'nullable|url',
             'linkedin_link' => 'nullable|url',
-        ]);
+            'github_link' => 'nullable|url',
+        ];
+
+        if ($request->has('update_credentials')) {
+
+            $rules['username'] = 'required|string|max:255|unique:users,username,' . $user->id;
+            $rules['password'] = 'nullable|string|min:6';
+            $rules['confirm_password'] = 'nullable|string|same:password';
+
+        }
+
+        $request->validate($rules);
 
         DB::beginTransaction();
         try {
@@ -293,6 +306,10 @@ class CandidateController extends Controller
             //$user->nic = $request->nic;
             //$user->address = $request->address;
 
+            if ($request->has('update_credentials')) {
+                $user->username = $request->username;
+            }
+
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
@@ -303,7 +320,8 @@ class CandidateController extends Controller
     ['user_id' => $user->id],
                 [
                     'nic'   => $request->nic ?: null,
-                    'dob'   => $request->dob ?: null,
+                    'dob'   => $request->dob ? Carbon::createFromFormat('d M Y', $request->dob)->format('Y-m-d') 
+            : null,
                     'address'     => $request->address ?: null,
                     'sex'     => $request->sex ?: null,
                 ]
@@ -319,6 +337,8 @@ class CandidateController extends Controller
                     'twitter_link'    => $request->twitter_link ?: null,
                 ]
             );
+
+            $user->load(['detail','socialLinks']);
 
             DB::commit();
 
@@ -499,7 +519,7 @@ class CandidateController extends Controller
 
         $validated = $request->validate([
             'total_years_experience' => 'nullable|integer|min:0',
-            'skills_summary' => 'nullable|string',
+            'skills_summary' => 'nullable',
             'about_yourself' => 'nullable|string',
             'current_employer' => 'nullable|string|max:255',
             'current_industry' => 'nullable|string|max:255',
@@ -521,7 +541,26 @@ class CandidateController extends Controller
 
             $professional = UserProfessionalDetail::where('user_id', $user_id)->first();
             $data = $validated;
+            if ($request->filled('skills_summary')) {
 
+                $skillsInput = $request->skills_summary;
+
+                // Check if it's JSON (Tagify)
+                $decoded = json_decode($skillsInput, true);
+
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    // Convert Tagify JSON → string
+                    $data['skills_summary'] = collect($decoded)
+                        ->pluck('value')
+                        ->implode(',');
+                } else {
+                    // Already normal string (manual input fallback)
+                    $data['skills_summary'] = $skillsInput;
+                }
+
+            } else {
+                $data['skills_summary'] = null;
+            }
             // =========================
             // FOLDER PATHS
             // =========================

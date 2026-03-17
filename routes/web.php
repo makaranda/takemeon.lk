@@ -198,6 +198,10 @@ Route::middleware(['auth', 'customer'])->group(function () {
     });
 });
 
+Route::post('/forgot-password', [AuthController::class,'userResetPassword'])->name('forgot.password');
+Route::post('/reset-password', [AuthController::class,'resetPassword'])->name('reset.password');
+Route::post('/verify-reset-otp', [AuthController::class,'verifyResetOtp'])->name('verify.resetotp');
+
 // Candidate Dashboard
 Route::middleware(['auth', 'candidate'])->group(function () {
     Route::get('/candidate-dashboard', [CandidateController::class, 'index'])->name('candidate.dashboard');
@@ -217,6 +221,7 @@ Route::middleware(['auth', 'candidate'])->group(function () {
         Route::get('/delete-past-employment/{user_id}',  [CandidateController::class, 'deletePastEmployement'])->name('frontend.deletepastemployement');
         
         Route::post('/check-profile-completeness/{user_id}',  [CandidateController::class, 'checkProfileCompleteness'])->name('frontend.checkprofilecompleteness');
+        Route::post('/forget-password-submit/{user_id}',  [CandidateController::class, 'forgetPasswordSubmit'])->name('frontend.forgetpasswordsubmit');
         
     });
 });

@@ -38,39 +38,39 @@ class AuthController extends Controller
         return view('pages.frontend.userlogin.index');
     }
 
-    public function userResetPassword(Request $request)
-    {
-        $request->validate([
-            'formResetPwd' => 'required|string|max:255',
-        ]);
+    // public function userResetPassword(Request $request)
+    // {
+    //     $request->validate([
+    //         'formResetPwd' => 'required|string|max:255',
+    //     ]);
 
-        $input = $request->input('formResetPwd');
-        $user = User::where('email', $input)
-                    ->orWhere('username', $input)
-                    ->first();
+    //     $input = $request->input('formResetPwd');
+    //     $user = User::where('email', $input)
+    //                 ->orWhere('username', $input)
+    //                 ->first();
 
-        if (!$user) {
-            return response()->json(['status' => 'error', 'message' => 'User not found.']);
-        }
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
-        SmsHelper::sendOtp($user->phone, $otp);
+    //     if (!$user) {
+    //         return response()->json(['status' => 'error', 'message' => 'User not found.']);
+    //     }
+    //     // Generate 6-digit OTP
+    //     $otp = rand(100000, 999999);
+    //     SmsHelper::sendOtp($user->phone, $otp);
 
-        // Save OTP in cache or DB
-        $user->otp = $otp;
-        $user->otp_expires_at = now()->addMinutes(5);
-        $user->save();
+    //     // Save OTP in cache or DB
+    //     $user->otp = $otp;
+    //     $user->otp_expires_at = now()->addMinutes(5);
+    //     $user->save();
 
-        // Simulate SMS sending (replace with actual SMS gateway)
-        // You should replace this with your SMS API (e.g. Twilio, Nexmo, etc.)
-        Log::info("OTP for {$user->phone}: $otp");
+    //     // Simulate SMS sending (replace with actual SMS gateway)
+    //     // You should replace this with your SMS API (e.g. Twilio, Nexmo, etc.)
+    //     Log::info("OTP for {$user->phone}: $otp");
 
-        return response()->json([
-            'status' => 'otp_sent',
-            'message' => 'OTP sent to registered phone number.',
-            'user_id' => $user->id
-        ]);
-    }
+    //     return response()->json([
+    //         'status' => 'otp_sent',
+    //         'message' => 'OTP sent to registered phone number.',
+    //         'user_id' => $user->id
+    //     ]);
+    // }
 
     public function verifyOtp(Request $request)
     {
@@ -97,6 +97,95 @@ class AuthController extends Controller
         Log::info("New password for {$user->phone}: $newPassword");
 
         return response()->json(['status' => 'success', 'message' => 'New password has been sent to your phone.']);
+    }
+
+
+    public function userResetPassword(Request $request)
+    {
+        $request->validate([
+            'username' => 'required'
+        ]);
+
+        $input = $request->username;
+
+        $user = User::where('email',$input)
+                    ->orWhere('username',$input)
+                    ->first();
+
+        if(!$user){
+            return response()->json([
+                'status'=>'error',
+                'message'=>'User not found'
+            ]);
+        }
+
+        $otp = rand(100000,999999);
+
+        $user->otp = $otp;
+        $user->otp_expires_at = now()->addMinutes(5);
+        $user->save();
+
+        SmsHelper::sendOtp($user->phone,$otp);
+
+        return response()->json([
+            'status'=>'otp_sent',
+            'user_id'=>$user->id
+        ]);
+    }
+
+    public function verifyResetOtp(Request $request)
+    {
+        $request->validate([
+            'otp'=>'required',
+            'user_id'=>'required'
+        ]);
+
+        $user = User::find($request->user_id);
+
+        if(!$user || $user->otp != $request->otp){
+            return response()->json([
+                'status'=>'error',
+                'message'=>'Invalid OTP'
+            ]);
+        }
+
+        if(now()->gt($user->otp_expires_at)){
+            return response()->json([
+                'status'=>'error',
+                'message'=>'OTP expired'
+            ]);
+        }
+
+        return response()->json([
+            'status'=>'verified'
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'user_id'=>'required',
+            'newpassword'=>'required|min:6'
+        ]);
+
+        $user = User::find($request->user_id);
+
+        if(!$user){
+            return response()->json([
+                'status'=>'error',
+                'message'=>'User not found'
+            ]);
+        }
+
+        $user->password = Hash::make($request->newpassword);
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->save();
+
+        return response()->json([
+            'status'=>'success',
+            'message'=>'Password reset successful'
+        ]);
     }
 
 
