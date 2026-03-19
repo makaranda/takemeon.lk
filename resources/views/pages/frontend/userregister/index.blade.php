@@ -114,28 +114,47 @@
                     <p><span class="text-danger">*</span> All Fields are Required</p>
                 </div>
 
-                <form action="{{ route('frontend.userregisterform') }}" method="POST" class="register-form-box">
+                <form action="{{ route('frontend.userregisterform') }}" id="userRegisterForm" method="POST" class="register-form-box">
                         @csrf
                     <input type="hidden" placeholder="Enter Address" value="{{ old('address','') }}" name="address" class="form-control custom-input"/>    
                     <!-- Single Input Fields -->
                     <div class="input-box">
                         <div class="form-group">
-                            <input type="text" placeholder="Enter full name" value="{{ old('full_name') }}" name="full_name" class="form-control custom-input">
+                            <input type="text" placeholder="Enter full name" value="{{ old('full_name') }}" name="full_name" class="form-control custom-input" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" placeholder="Enter email address" value="{{ old('email') }}" name="email" class="form-control custom-input">
+                            <input type="email" placeholder="Enter email address" value="{{ old('email') }}" name="email" class="form-control custom-input" required>
                         </div>
                         <div class="form-group">
-                            <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number') }}" name="phone_number" class="form-control custom-input">
+                            <input type="number" placeholder="Enter Phone Number" value="{{ old('phone_number') }}" name="phone_number" class="form-control custom-input" required minlength="10" data-parsley-minlength="10" maxlength="10" data-parsley-maxlength="10">
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter Username" value="{{ old('username') }}" name="username" class="form-control custom-input">
+                            <input type="text" placeholder="Enter Username" value="{{ old('username') }}" name="username" class="form-control custom-input" required data-parsley-required-message="Username is required">
                         </div>
-                        <div class="form-group">
-                            <input type="password" placeholder="Enter Password" name="password" class="form-control custom-input">
+                        <div class="form-group position-relative">
+                            <input type="password"
+                                id="password"
+                                placeholder="Enter Password"
+                                name="password"
+                                class="form-control custom-input pr-5" required minlength="6" data-parsley-minlength="6" data-parsley-pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).+$" data-parsley-pattern-message="Password must contain letters, numbers, and symbols">
+
+                            <span toggle="#password"
+                                class="fa fa-eye toggle-password"
+                                style="position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control custom-input">
+
+                        <div class="form-group position-relative">
+                            <input type="password"
+                                id="confirm_password"
+                                placeholder="Confirm Password"
+                                name="confirm_password"
+                                class="form-control custom-input pr-5" required data-parsley-equalto="#password" data-parsley-equalto-message="Passwords do not match">
+
+                            <span toggle="#confirm_password"
+                                class="fa fa-eye toggle-password"
+                                style="position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                            </span>
                         </div>
                     </div>
 
@@ -254,12 +273,114 @@
                 }
             }
         }
+
+
     </style>
 @endpush
 
 @push('scripts')
     <script>
+        $(document).on('click', '.toggle-password', function () {
+
+            // toggle icon
+            $(this).toggleClass('fa-eye fa-eye-slash');
+
+            // get related input
+            let input = $($(this).attr('toggle'));
+
+            // toggle type
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+            } else {
+                input.attr('type', 'password');
+            }
+        });
+
+        $('#userRegisterForm').parsley();
         $(document).ready(function() {
+            $('#userRegisterForm').submit(function (e) {
+                e.preventDefault();
+
+                let form = $(this);
+                let formData = form.serialize();
+
+                let btn = form.find('button[type="submit"]');
+                btn.prop('disabled', true).text('Processing...');
+
+                form.parsley();
+
+                form.submit(function (e) {
+
+                    // Validate first
+                    if (!form.parsley().isValid()) {
+                        return; // stop if validation fails
+                    }
+
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: 'POST',
+                        data: formData,
+
+                        success: function (res) {
+
+                            if (res.status === 'success') {
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: res.message,
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    window.location.href = res.redirect;
+                                });
+
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: res.message || 'Something went wrong!',
+                                    confirmButtonColor: '#d33'
+                                });
+
+                                btn.prop('disabled', false).text('Signup');
+                            }
+                        },
+
+                        error: function (xhr) {
+
+                            btn.prop('disabled', false).text('Signup');
+
+                            if (xhr.status === 422) {
+
+                                let errors = xhr.responseJSON.errors;
+                                let errorText = '';
+
+                                $.each(errors, function (key, value) {
+                                    errorText += value[0] + '\n';
+                                });
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Validation Error',
+                                    text: errorText
+                                });
+
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Server error. Please try again!'
+                                });
+
+                            }
+                        }
+                    });
+                });
+            });
             // Increase quantity
             $('.input-number-increment').click(function () {
                 let id = $(this).data('id');

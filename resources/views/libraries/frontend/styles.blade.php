@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="{{ url('public/assets/frontend/css/nice-select.css') }}">
     <link rel="stylesheet" href="{{ url('public/assets/css/style.css') }}">
 <!-- CSS End here -->    
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/parsleyjs/src/parsley.css">
 <!-- Custome Codes -->
 <link rel="stylesheet" href="{{ url('public/assets/css/mystyle.css?v='.time().'') }}">
 <link rel="stylesheet" href="{{ url('public/assets/css/myresponsive.css?v='.time().'') }}">

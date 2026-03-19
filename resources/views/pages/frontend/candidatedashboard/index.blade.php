@@ -10,14 +10,14 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="hero-cap text-center">
-                        <h2>Candidate Dashboard</h2>
+                        <h2>User Information</h2>
                     </div>
                 </div>
                 <div class="col-xl-12">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Candidate Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#">User Information</a></li>
                         </ol>
                     </nav>
                 </div>
@@ -375,7 +375,8 @@
 
                             </div>
 
-
+                                                            
+                                                            
                             <!-- EDUCATION -->
                             <div class="tab-pane fade"
                                 id="education"
@@ -540,19 +541,40 @@
                                                             <input type="text" placeholder="Enter Current Employer" value="{{ old('current_employer',optional($user->professionalDetail)->current_employer) }}" name="current_employer" class="form-control custom-input">
                                                             <small class="text-danger error-text current_employer_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Current Industry</label>
-                                                            <input type="text" placeholder="Enter Current Industry" value="{{ old('current_industry',optional($user->professionalDetail)->current_industry) }}" name="current_industry" class="form-control custom-input">
+                                                            <select class="" name="current_industry" id="current_industry">
+                                                                <option value="">Current Industry</option>
+                                                                @if($emp_industries)
+                                                                    @foreach ($emp_industries as $industry)
+                                                                        <option value="{{ $industry->slug }}" {{ old('current_industry', optional($user->professionalDetail)->current_industry) == $industry->slug ? 'selected' : '' }}> {{ $industry->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text current_industry_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
-                                                            <label>Current Business Function</label>
-                                                            <input type="text" placeholder="Enter Current Business Function" value="{{ old('current_business_function',optional($user->professionalDetail)->current_business_function) }}" name="current_business_function" class="form-control custom-input">
+                                                        <div class="select-form form-group col-12 col-md-6">
+                                                            <label>Job Type</label>
+                                                            <select class="" name="current_business_function" id="current_business_function">
+                                                                <option value="">Job Type</option>
+                                                                @if($emp_main_categories)
+                                                                    @foreach ($emp_main_categories as $job_type)
+                                                                        <option value="{{ $job_type->slug }}" {{ old('current_business_function', optional($user->professionalDetail)->current_business_function) == $job_type->slug ? 'selected' : '' }}> {{ $job_type->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text current_business_function_error"></small>
                                                         </div>
-                                                        <div class="form-group col-12 col-md-6">
+                                                        <div class="select-form form-group col-12 col-md-6">
                                                             <label>Role / Designation</label>
-                                                            <input type="text" placeholder="Enter Designation" value="{{ old('designation',optional($user->professionalDetail)->designation) }}" name="designation" class="form-control custom-input">
+                                                             <select class="" name="designation" id="role_designation">
+                                                                <option value="">Role / Designation</option>
+                                                                @if($emp_designations)
+                                                                    @foreach ($emp_designations as $designation)
+                                                                        <option value="{{ $designation->slug }}" {{ old('designation', optional($user->expectingArea)->designation) == $designation->slug ? 'selected' : '' }}> {{ $designation->name }} </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
                                                             <small class="text-danger error-text designation_error"></small>
                                                         </div>
                                                         <div class="form-group col-12 col-md-6">
@@ -889,9 +911,20 @@
     <script>
 
         $(document).ready(function () {
+            $('#current_industry').select2({
+                placeholder: "Current Industry",
+                allowClear: true,
+                width: '100%'
+            });
 
             $('#job_industry').select2({
-                placeholder: "Select Industry",
+                placeholder: "Job Industry",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#role_designation').select2({
+                placeholder: "Select Designation",
                 allowClear: true,
                 width: '100%'
             });
@@ -904,6 +937,12 @@
 
             $('#job_role').select2({
                 placeholder: "Select Job Role",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#current_business_function').select2({
+                placeholder: "Job Type",
                 allowClear: true,
                 width: '100%'
             });

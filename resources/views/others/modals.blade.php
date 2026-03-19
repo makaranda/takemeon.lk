@@ -31,7 +31,7 @@
 
                     <button type="submit"
                             id="formModelBtnOk"
-                            class="btn btn-primary">
+                            class="btn btn-primary rounded-lg">
                         OK
                     </button>
 

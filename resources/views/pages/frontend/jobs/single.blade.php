@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="hero-cap text-center">
-                        <h2>Jobs List</h2>
+                        <h2>{{ $job->name ?? 'Job Seeker' }}</h2>
                     </div>
                 </div>
                 <div class="col-xl-12">
@@ -40,6 +40,7 @@
                 <!-- Job Header -->
                 <div class="single-job-items mb-50 border-none shadow-none">
                     <div class="job-tittlew-100">
+                        {{-- {{ dd($job->expectingArea) }} --}}
                         <h3>{{ $job->name ?? 'Job Seeker' }}</h3>
                     </div>
                     <div class="job-items">
@@ -49,7 +50,8 @@
                         </div>
 
                         <div class="job-tittle">
-                            <h4>{{ $job->expectingArea?->designation ?? 'Job Seeker' }}</h4>
+                            <h4>{{ $job->expectingArea?->empDesignation?->name ?? 'Job Seeker' }}</h4>
+                            
 
                             <ul>
                                 <li>
@@ -96,14 +98,22 @@
 
 
                     <!-- Skills -->
-                    <div class="post-details2 mb-50">
+                    <div class="post-details2 mb-50 tag_cloud_widget">
                         <div class="small-section-tittle">
                             <h4>Skills</h4>
                         </div>
 
-                        <p>
-                            {{ $job->professionalDetail?->skills_summary ?? 'No skills added' }}
-                        </p>
+                        @if(!empty($job->professionalDetail?->skills_summary))
+                            <ul class="list">
+                                @foreach(explode(',', $job->professionalDetail->skills_summary) as $skill)
+                                    <li>
+                                        <a href="#">{{ trim($skill) }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p>No skills added</p>
+                        @endif
                     </div>
 
 
@@ -156,92 +166,171 @@
                         <h4>Job Overview</h4>
                     </div>
 
-                    <ul>
-
-                        <li>
-                            Posted date :
-                            <span>{{ $job->created_at->format('d M Y') }}</span>
-                        </li>
-
-                        <li>
-                            Location :
-                            <span>{{ $job->detail?->city?->name ?? 'Sri Lanka' }}</span>
-                        </li>
-
-                        <li>
-                            Experience :
-                            <span>
-                                {{ $job->professionalDetail?->total_years_experience ?? '0' }} Years
-                            </span>
-                        </li>
-
-                        <li>
-                            Job nature :
-                            <span>
-                                {{ $job->expectingArea?->job_type ?? 'Full Time' }}
-                            </span>
-                        </li>
-
-                        <li>
-                            Salary :
-                            <span>
-                                Rs {{ number_format($job->professionalDetail?->current_salary ?? 0) }}
-                            </span>
-                        </li>
-
-                        <li>
-                            Notice Period :
-                            <span>
-                                {{ $job->professionalDetail?->notice_period_days ?? 'N/A' }} Days
-                            </span>
-                        </li>
-
+                    <ul class="job_overview_list">
+                        @if(!empty($job->created_at->format('d M Y')))
+                            <li>
+                                Posted date :
+                                <span>{{ $job->created_at->format('d M Y') }}</span>
+                            </li>
+                        @endif
+                        @if(!empty($job->detail?->city?->name))
+                            <li>
+                                Location :
+                                <span>{{ $job->detail?->city?->name ?? 'Sri Lanka' }}</span>
+                            </li>
+                        @endif
+                        @if(!empty($job->professionalDetail?->total_years_experience))
+                            <li>
+                                Experience :
+                                <span>
+                                    {{ $job->professionalDetail?->total_years_experience ?? '0' }} Years
+                                </span>
+                            </li>
+                        @endif
+                        @if(!empty($job->expectingArea?->job_type))
+                            <li>
+                                Job nature :
+                                <span>
+                                    {{ $job->expectingArea?->job_type ?? 'Full Time' }}
+                                </span>
+                            </li>
+                        @endif
+                        @if(!empty($job->professionalDetail?->current_salary))
+                            <li>
+                                Salary :
+                                <span>
+                                    Rs {{ number_format($job->professionalDetail?->current_salary ?? 0) }}
+                                </span>
+                            </li>
+                        @endif
+                        @if(!empty($job->professionalDetail?->notice_period_days))
+                            <li>
+                                Notice Period :
+                                <span>
+                                    {{ $job->professionalDetail?->notice_period_days ?? 'N/A' }} Days
+                                </span>
+                            </li>
+                        @endif
                     </ul>
 
-                    <div class="apply-btn2">
+                    {{-- <div class="apply-btn2">
                         <a href="#" class="btn">Contact Candidate</a>
-                    </div>
+                    </div> --}}
 
                 </div>
 
 
 
                 <!-- Company / Candidate Info -->
-                <div class="post-details4 mb-50">
+                <div class="post-details3 mb-50">
 
                     <div class="small-section-tittle">
-                        <h4>Candidate Information</h4>
+                        <h4>Contact Information</h4>
                     </div>
 
-                    <span>{{ $job->name }}</span>
+                    {{-- <span>{{ $job->name }}</span> --}}
 
                     <p>
                         {{ $job->professionalDetail?->about_current_role ?? '' }}
                     </p>
 
                     <ul>
-
-                        <li>
-                            Email :
-                            <span>{{ $job->email }}</span>
-                        </li>
-
-                        <li>
-                            Phone :
-                            <span>{{ $job->phone }}</span>
-                        </li>
-
-                        <li>
-                            LinkedIn :
-                            <span>
-                                {{ $job->socialLinks?->linkedin_link ?? 'N/A' }}
-                            </span>
-                        </li>
-
+                        @if(!empty($job->email))
+                            <li>
+                                Email :
+                                <span><a href="mailto:{{ $job->email }}">{{ $job->email }}</a></span>
+                            </li>
+                        @endif
+                        @if(!empty($job->phone))
+                            <li>
+                                Phone :
+                                <span><a href="tel:{{ $job->phone }}">{{ $job->phone }}</a></span>
+                            </li>
+                        @endif
+                        @if(!empty($job->socialLinks?->facebook_link))
+                            <li>
+                                Facebook :
+                                <span>
+                                    <a href="{{ $job->socialLinks?->facebook_link ?? '#' }}" target="_blank">{{ $job->socialLinks?->facebook_link ?? 'N/A' }}</a>
+                                </span>
+                            </li>
+                        @endif
+                        @if(!empty($job->socialLinks?->linkedin_link))
+                            <li>
+                                LinkedIn :
+                                <span>
+                                    <a href="{{ $job->socialLinks?->linkedin_link ?? '#' }}" target="_blank">{{ $job->socialLinks?->linkedin_link ?? 'N/A' }}</a>
+                                </span>
+                            </li>
+                        @endif
+                        @if(!empty($job->socialLinks?->github_link))
+                            <li>
+                                Github :
+                                <span>
+                                    <a href="{{ $job->socialLinks?->github_link ?? '#' }}" target="_blank">{{ $job->socialLinks?->github_link ?? 'N/A' }}</a>
+                                </span>
+                            </li>
+                        @endif
                     </ul>
 
                 </div>
 
+            </div>
+
+            <div class="col-12 col-md-12 col-lg-12">
+                <div class="small-section-tittle">
+                    <h4>Past Employments</h4>
+                </div>
+                @if($job->pastEmployments && $job->pastEmployments->count())
+                <div id="accordion">
+
+                    @foreach($job->pastEmployments as $index => $employment)
+                        <div class="card">
+
+                            <div class="card-header">
+                                <a class="card-link {{ $index != 0 ? 'collapsed' : '' }}"
+                                data-toggle="collapse"
+                                href="#collapse{{ $index }}">
+
+                                    {{ $employment->company_name ?? 'Company' }}
+                                    - {{ $employment->role ?? 'Role' }}
+                                </a>
+                            </div>
+
+                            <div id="collapse{{ $index }}"
+                                class="collapse {{ $index == 0 ? 'show' : '' }}"
+                                data-parent="#accordion">
+
+                                <div class="card-body">
+
+                                    <p><strong>Company:</strong> {{ $employment->company_name }}</p>
+
+                                    <p><strong>Role:</strong> {{ $employment->role }}</p>
+
+                                    <p><strong>Industry:</strong> {{ $employment->industry }}</p>
+
+                                    <p><strong>Category:</strong> {{ $employment->employee_category }}</p>
+
+                                    <p>
+                                        <strong>Duration:</strong>
+                                        {{ $employment->start_date }}
+                                        -
+                                        {{ $employment->end_date ?? 'Present' }}
+                                    </p>
+
+                                    <p><strong>About Role:</strong></p>
+                                    <p>{{ $employment->about_role }}</p>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    @endforeach
+
+                </div>
+                @else
+                    <p>No past employments found</p>
+                @endif            
             </div>
 
         </div>
@@ -257,6 +346,56 @@
 
 @push('css')
   <style>
+    #accordion{
+        .card{
+            .card-header{
+                background-color: #8f50a2;
+            }
+        }
+    }
+
+    .tag_cloud_widget{ 
+        ul {
+            padding-left: 0px;
+            li {
+                display: inline-block;
+                a {
+                    display: inline-block;
+                    border: 1px solid #c3c3c3;
+                    background: #e5e5e5;
+                    padding: 4px 20px;
+                    margin-bottom: 8px;
+                    margin-right: 3px;
+                    transition: all 0.3s ease 0s;
+                    color: #888888;
+                    font-size: 13px;
+
+                    &:hover{
+                        background: #8f50a2;
+                        color: #fff !important;
+                        -webkit-text-fill-color: #fff;
+                        text-decoration: none;
+                        -webkit-transition: 0.5s;
+                        transition: 0.5s;
+                    }
+                }
+            }
+        }
+    }
+    .post-details3{
+        ul{
+            li{
+                span{
+                    a{
+                        color: #8f50a2;
+                    }
+                }
+            }
+            li:last-child{
+                margin-bottom: 0px;
+            }
+        }
+    }
     img.img-fluid.login-logo {
     width: 120px !important;
     }

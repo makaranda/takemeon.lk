@@ -112,6 +112,7 @@ class CandidateController extends Controller
     {
         //$user = auth()->user(); // secure (ignore passed ID)
         $user = User::where('status',1)->where('id',$user_id)->first();
+        $defaultImage = 'user_profile.png';
 
         if (auth()->id() != $user->id) {
             return response()->json([
@@ -120,7 +121,7 @@ class CandidateController extends Controller
             ], 403);
         }
 
-        $user_details = UserDetail::where('user_id',$user_id)->first();
+            $user_details = UserDetail::where('user_id',$user_id)->first();
 
             $profileImgPath  = public_path('assets/frontend/candidates');
 
@@ -138,8 +139,14 @@ class CandidateController extends Controller
                 $filename = 'profile_img_' . $user_id . '_' . time() . '.' . $file->getClientOriginalExtension();
 
                 // Delete old file
-                if ($user_details && $user_details->profile_img && File::exists($profileImgPath . $user_details->profile_img)) {
-                    File::delete($profileImgPath . $user_details->profile_img);
+                // if ($user_details && $user_details->profile_img && File::exists($profileImgPath . $user_details->profile_img)) {
+                //     File::delete($profileImgPath . $user_details->profile_img);
+                // }
+
+                if ($user_details && $user_details->profile_img && $user_details->profile_img !== $defaultImage &&
+                    File::exists($profileImgPath . '/' . $user_details->profile_img)
+                ) {
+                    File::delete($profileImgPath . '/' . $user_details->profile_img);
                 }
 
                 $file->move($profileImgPath, $filename);

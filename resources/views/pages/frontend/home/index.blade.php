@@ -37,7 +37,7 @@
                         <div class="row">
                             <div class="col-xl-8">
                                 <!-- form -->
-                                <form action="#" class="search-box">
+                                <form action="#" class="home-section-hero search-box">
                                     
                                     <div class="select-form1">
                                         <div class="select-itms1">
@@ -51,8 +51,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="select-form1">
-                                        <div class="select-itms1">
+                                    <div class="select-form2">
+                                        <div class="select-itms2">
                                             <select name="select_role" id="select_role">
                                                 <option value="">Select </option>
                                                 @if($designations)
@@ -488,6 +488,7 @@
         });
     </script>
     <script>
+
 
         // document.addEventListener('DOMContentLoaded', function () {
         //     new Swiper('.partner__carousel', {

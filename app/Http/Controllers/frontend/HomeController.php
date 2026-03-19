@@ -118,12 +118,31 @@ class HomeController extends Controller
         return view('pages.frontend.about.index', compact('about_info')); // Make sure this view exists
     }
 
+    // public function needTraining(){
+    //     VisitorHelper::updateVisitorCount();
+    //     return view('pages.frontend.needtraining.index');
+    // }
+
     public function privacyPolicy()
     {
         VisitorHelper::updateVisitorCount();
         $page_info = Page::where('slug', 'Like', 'privacy-and-policy')->first();
 
         return view('pages.frontend.privacy.index', compact('page_info'));
+    }
+    public function termsAndConditions()
+    {
+        VisitorHelper::updateVisitorCount();
+        $page_info = Page::where('slug', 'Like', 'terms-and-conditions')->first();
+
+        return view('pages.frontend.termsandconditions.index', compact('page_info'));
+    }
+    public function faq()
+    {
+        VisitorHelper::updateVisitorCount();
+        $page_info = Page::where('slug', 'Like', 'faq')->first();
+
+        return view('pages.frontend.faq.index', compact('page_info'));
     }
 
     public function enroll()

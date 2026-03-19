@@ -36,13 +36,13 @@
                                     <p>Address: {{ $settings['address'] ?? 'Colombo, Sri Lanka' }}</p>
                                 </li>
                                 <li>
-                                    <a href="tel:{{ $settings['contact'] }}">
-                                        Phone: {{ $settings['contact'] }}
+                                    <a href="tel:{{ $settings['contact_number'] }}">
+                                        Phone: {{ $settings['contact_number'] }}
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="mailto:{{ $settings['email'] }}">
-                                        Email: {{ $settings['email'] }}
+                                    <a href="mailto:{{ $settings['email_address'] }}">
+                                        Email: {{ $settings['email_address'] }}
                                     </a>
                                 </li>
                             </ul>
@@ -59,6 +59,7 @@
                                 <li><a href="{{ route('frontend.about') }}">About Us</a></li>
                                 <li><a href="{{ route('frontend.contact') }}">Contact Us</a></li>
                                 <li><a href="{{ route('frontend.privacypolicy') }}">Privacy Policy</a></li>
+                                <li><a href="{{ route('frontend.termsandconditions') }}">Terms & Conditions</a></li>
                                 <li><a href="{{ route('frontend.faq') }}">FAQ</a></li>
                                 <li><a href="{{ route('frontend.home.blogs') }}">Blogs</a></li>
                             </ul>

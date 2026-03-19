@@ -1,11 +1,13 @@
+
+<!-- All JS Custom Plugins Link Here here -->
+<script src="{{ url('public/assets/frontend/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+
 <script type="application/javascript" src="{{ url('public/assets/frontend/js/swiper-bundle.min.js') }}"></script>
 <script type="application/javascript" src="{{ url('public/assets/frontend/js/aos.js') }}"></script>
 
 <!-- Slick-slider , Owl-Carousel ,slick-nav -->
 <script src="{{ url('public/assets/frontend/js/slick.min.js') }}"></script>
 
-<!-- All JS Custom Plugins Link Here here -->
-<script src="{{ url('public/assets/frontend/js/vendor/modernizr-3.5.0.min.js') }}"></script>
 <!-- Jquery, Popper, Bootstrap -->
 <script src="{{ url('public/assets/frontend/js/vendor/jquery-1.12.4.min.js') }}"></script>
 <script src="{{ url('public/assets/frontend/js/popper.min.js') }}"></script>
@@ -51,13 +53,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 {{-- <script src="{{ asset('build/assets/app.js') }}"></script> --}}
 
-
+<script src="https://cdn.jsdelivr.net/npm/parsleyjs"></script>
 
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
   const player = new Plyr('#video-source');
+
+  console.log('Windows Jquery is '+window.jQuery);
 </script>
 
 <script>

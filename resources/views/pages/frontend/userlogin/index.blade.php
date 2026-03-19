@@ -114,18 +114,26 @@
                     <p><span class="text-danger">*</span> All Fields are Required</p>
                 </div>
 
-                <form action="{{ route('frontend.userloginform') }}" method="post">
+                <form action="{{ route('frontend.userloginform') }}" id="userLoginForm" method="post">
                     @csrf
                     <div class="form-group">
                         <input type="text"
                                class="form-control custom-input"
-                               placeholder="Email or Username" name="username">
+                               placeholder="Email or Username" name="username" required data-parsley-required-message="Username is required">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group position-relative">
                         <input type="password"
-                               class="form-control custom-input"
-                               placeholder="Password" name="password">
+                            class="form-control custom-input pr-5"
+                            placeholder="Password"
+                            name="password"
+                            id="password" required minlength="6" data-parsley-minlength="6" data-parsley-pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).+$" data-parsley-pattern-message="Password must contain letters, numbers, and symbols">
+
+                        <!-- Eye Icon -->
+                        <span toggle="#password"
+                            class="fa fa-eye toggle-password"
+                            style="position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                        </span>
                     </div>
 
                     <button type="submit"
@@ -254,6 +262,17 @@
 
 @push('scripts')
     <script>
+        $(document).on('click', '.toggle-password', function () {
+            $(this).toggleClass('fa-eye fa-eye-slash');
+
+            let input = $($(this).attr('toggle'));
+
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+            } else {
+                input.attr('type', 'password');
+            }
+        });
         function FormModelDetails(title, body, cancel, ok = '', page_id = 0, action = null, method = 'POST') {
             $('#formModelLabel').text(title);
             $('#formModelBody').html(body);
@@ -272,6 +291,79 @@
         }
 
         $(document).ready(function() {
+            $('#userLoginForm').parsley();
+            $('#userLoginForm').submit(function (e) {
+                e.preventDefault();
+                let form = $(this);
+                let formData = form.serialize();
+
+                form.parsley();
+
+                form.submit(function (e) {
+                    // Validate first
+                    if (!form.parsley().isValid()) {
+                        return; // stop if validation fails
+                    }
+
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: 'POST',
+                        data: formData,
+                        success: function (res) {
+                            if (res.status === 'success') {
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Login Successful',
+                                    text: 'Redirecting...',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+
+                                setTimeout(() => {
+                                    window.location.href = res.redirect;
+                                }, 1500);
+
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Login Failed',
+                                    text: res.message,
+                                    confirmButtonColor: '#d33'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 422) {
+                                let errors = xhr.responseJSON.errors;
+                                let errorText = '';
+
+                                $.each(errors, function (key, value) {
+                                    errorText += value[0] + '\n';
+                                });
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Validation Error',
+                                    text: errorText
+                                });
+
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Something went wrong!'
+                                });
+                            }
+
+                        }
+                    });
+                });
+            });
+
             let step = 1;
             $('#btn_forgetpwd').on('click',function(){
                 console.log('Click Button');
@@ -294,7 +386,7 @@
 
                 var formData = $(this).serialize();
                 var user_id = $('#formPageId').val();
-
+                //alert();
                 if(step === 1){
 
                     $.ajax({
@@ -341,7 +433,7 @@
                                 });
 
                             }else{
-
+                                
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
@@ -354,8 +446,13 @@
                         },
 
                         error: function (xhr) {
-
-                            alert(xhr.responseJSON?.message || 'Step 1 - Something went wrong!');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                //position: "bottom-end",
+                                text: xhr.responseJSON?.message || 'Step 1 - Something went wrong!'
+                            });
+                            //alert(xhr.responseJSON?.message || 'Step 1 - Something went wrong!');
 
                         }
 
@@ -426,8 +523,13 @@
                         },
 
                         error: function (xhr) {
-
-                            alert(xhr.responseJSON?.message || 'Step 2 - Something went wrong!');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                position: "bottom-end",
+                                text: xhr.responseJSON?.message || 'Step 2 - Something went wrong!'
+                            });
+                            //alert(xhr.responseJSON?.message || 'Step 2 - Something went wrong!');
 
                         }
 
@@ -481,8 +583,13 @@
                         },
 
                         error: function (xhr) {
-
-                            alert(xhr.responseJSON?.message || 'Step 3 - Something went wrong!');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                position: "bottom-end",
+                                text: xhr.responseJSON?.message || 'Step 3 - Something went wrong!'
+                            });
+                            //alert(xhr.responseJSON?.message || 'Step 3 - Something went wrong!');
 
                         }
 

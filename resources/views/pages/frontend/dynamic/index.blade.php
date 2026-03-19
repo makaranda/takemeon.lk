@@ -18,22 +18,23 @@
     <!--/ bradcam_area  -->
 
     <!-- Hero area Start-->
-    <div class="hero-area section-bg2">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="slider-area">
-                        <div class="slider-height2 slider-bg4 d-flex align-items-center justify-content-center">
-                            <div class="hero-caption hero-caption2">
-                                <h2>{{ $page['title'] }}</h2>
-                                <nav aria-label="breadcrumb">
-                                    <ol class="breadcrumb justify-content-center">
-                                        <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
-                                        <li class="breadcrumb-item"><a href="#">{{ $page['title'] }}</a></li>
-                                    </ol>
-                                </nav>
-                            </div>
+    <div class="slider-area ">
+        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="{{ url('public/assets/frontend/img/hero/about.jpg') }}">
+            <div class="container">
+                
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2>{{ $page['title'] }}</h2>
                         </div>
+                    </div>
+                    <div class="col-xl-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb justify-content-center">
+                                <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ $page['title'] }}</a></li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
             </div>

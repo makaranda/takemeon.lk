@@ -32,7 +32,7 @@ class JobsController extends Controller
     {
         $jobs = User::where('status', 1)->orderBy('created_at', 'ASC')->get();
         //$users = User::with(['detail', 'socialLinks','expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->find(Auth::id());
-        $jobsCount = User::where('status', 1)->where('active', 1)->count();
+        $jobsCount = User::where('status', 1)->where('active', 1)->where('role', 'candidate')->count();
         $designations = EmpDesignation::where('status',1)->get(); 
         $industries = EmpIndustry::where('status',1)->get();  
         $categories = EmpMainCategory::where('status',1)->get();  
@@ -48,7 +48,7 @@ class JobsController extends Controller
 
     public function viewJob($slug)
     {
-        $job = User::with(['detail', 'socialLinks','expectingArea','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->where('slug', $slug)->where('status', 1)->firstOrFail();
+        $job = User::with(['detail', 'socialLinks','expectingArea.empIndustries','expectingArea.empDesignation','UserEducation','schoolLevel','professionalDetail','pastEmployments'])->where('slug', $slug)->where('status', 1)->firstOrFail();
         return view('pages.frontend.jobs.single', compact('job'));
     }
 

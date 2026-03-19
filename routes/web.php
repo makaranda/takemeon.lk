@@ -8,6 +8,7 @@ use App\Http\Controllers\frontend\JobsController;
 use App\Http\Controllers\frontend\PaymentController;
 use App\Http\Controllers\frontend\CustomerDashboardController;
 use App\Http\Controllers\frontend\CandidateController;
+use App\Http\Controllers\frontend\TrainingBookingController;
 
 /** Admin Controllers */
 use App\Http\Controllers\admin\AuthController;
@@ -36,6 +37,7 @@ use App\Http\Controllers\admin\HomeSectionPartnersController;
 use App\Http\Controllers\admin\HomeSectionAccordingController;
 use App\Http\Controllers\admin\CKEditorController;
 use App\Http\Controllers\admin\UploadsController;
+
 
 
 use Illuminate\Support\Facades\Artisan;
@@ -109,7 +111,7 @@ Route::prefix('/products')->group(function () {
 
 
 // Jobs List Routes
-Route::prefix('/jobs-listing')->group(function () {
+Route::prefix('/find-an-employee')->group(function () {
     Route::get('/', [JobsController::class, 'showAllJobs'])->name('frontend.home.jobs');
     Route::get('/fetch-jobs', [JobsController::class, 'fetchJobs'])->name('frontend.jobs.fetch');
     Route::get('/find/{cat_slug}', [JobsController::class, 'viewCategory'])->name('frontend.job.category');
@@ -147,6 +149,15 @@ Route::prefix('/blogs')->group(function () {
     Route::get('/category/{slug}', [HomeController::class, 'viewCategory'])->name('frontend.blog.category');
     //Route::get('/{slug}', [HomeController::class, 'viewNews'])->name('frontend.news.events.view');
 });
+
+Route::prefix('/need-a-training')->group(function () {
+    Route::get('/', [TrainingBookingController::class, 'index'])->name('frontend.home.needtraining');
+    Route::get('/training-bookings', [TrainingBookingController::class, 'getBookings'])->name('frontend.home.getbooking');
+    Route::post('/training-bookings', [TrainingBookingController::class, 'store'])->name('frontend.home.savebooking');
+    Route::get('/training-bookings/{id}', [TrainingBookingController::class, 'show'])->name('frontend.home.showbooking');
+});
+
+
 
 // Events Routes
 Route::prefix('/events')->group(function () {
@@ -204,8 +215,8 @@ Route::post('/verify-reset-otp', [AuthController::class,'verifyResetOtp'])->name
 
 // Candidate Dashboard
 Route::middleware(['auth', 'candidate'])->group(function () {
-    Route::get('/candidate-dashboard', [CandidateController::class, 'index'])->name('candidate.dashboard');
-    Route::prefix('candidate-dashboard')->group(function () {
+    Route::get('/user-information', [CandidateController::class, 'index'])->name('candidate.dashboard');
+    Route::prefix('user-information')->group(function () {
         Route::post('/user-profile-details-update/{user_id}', [CandidateController::class, 'userProfileDetailsUpdate'])->name('frontend.userprofiledetails.update');
         Route::post('/user-profile-update/{user_id}', [CandidateController::class, 'userProfileUpdate'])->name('frontend.userprofile.update');
         Route::post('/user-profile-expecting-update/{user_id}', [CandidateController::class, 'userProfileExpectingUpdate'])->name('frontend.userexpectingdetails.update');

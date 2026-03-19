@@ -31,4 +31,14 @@ class UserExpectingArea extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function empIndustries()
+    {
+        return $this->belongsTo(EmpIndustry::class, 'job_industry', 'slug');
+    }
+
+    public function empDesignation()
+    {
+        return $this->belongsTo(EmpDesignation::class, 'designation', 'slug');
+    }
 }

@@ -115,11 +115,11 @@
                                         </li>
 
                                         <li class="{{ request()->routeIs('frontend.home.jobs') ? 'active' : '' }}">
-                                            <a href="{{ route('frontend.home.jobs') }}">Find a Jobs</a>
+                                            <a href="{{ route('frontend.home.jobs') }}">Find an Employee</a>
                                         </li>
 
-                                        <li>
-                                            <a href="#">Need a Training</a>
+                                        <li class="{{ request()->routeIs('frontend.home.needtraining') ? 'active' : '' }}">
+                                            <a href="{{ route('frontend.home.needtraining') }}">Need a Training</a>
                                         </li>
 
                                         <li class="{{ request()->routeIs('frontend.about') ? 'active' : '' }}">

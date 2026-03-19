@@ -169,12 +169,17 @@
     &::before {
         background: var(--third-color);
     }
-}    
+}   
+
+.head-btn1{
+  border-radius:40px;
+}
 
 .head-btn2 {
     background: none !important;
     border: 1px solid var(--secondary-color);
     color: var(--secondary-color);
+    border-radius:40px;
     
     &:hover{
        background: var(--secondary-color) !important; 
@@ -349,4 +354,12 @@ form.search-box {
     user-select: none;
     white-space: nowrap;
     width: auto;
+}
+
+.rounded-lg{
+  border-radius: 40px;
+}
+
+.parsley-errors-list {
+    margin: 10px 0 3px;
 }

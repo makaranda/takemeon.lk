@@ -16,7 +16,7 @@
                     </a>
                     <ul>
                         <li>
-                            {{ $job->latestPastEmployment?->company_name ?? 'Company Not Available' }}
+                            {{ $job->expectingArea?->job_industry ?? '' }}
                         </li>
                         <li>
                             <i class="fas fa-map-marker-alt"></i>

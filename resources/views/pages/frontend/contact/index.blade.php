@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     <div class="form-group mt-3 border-0">
-                        <button type="submit" class="button button-contactForm boxed-btn">Send</button>
+                        <button type="submit" class="btn head-btn1">Send</button>
                     </div>
                 </form>
             </div>

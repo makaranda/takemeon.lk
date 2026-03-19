@@ -1,29 +1,106 @@
 
 @media (max-width: 2040px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                
+            }
+        }
+    }
 }
 
 @media (max-width: 1440px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                
+            }
+        }
+    } 
 }
 
 @media (max-width: 1024px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                
+            }
+        }
+    }    
 }
 
 @media (max-width: 768px) {
-  
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+                margin-bottom: 10px;
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                margin-bottom: 10px;
+            }
+        }
+    }  
 }
 
 @media (max-width: 576px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+                margin-bottom: 10px;
+            }
+        }
+        .select-form2{
+            .select-itms2{
+               margin-bottom: 10px; 
+            }
+        }
+    }    
 }
 
 @media (max-width: 480px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+                margin-bottom: 10px;
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                margin-bottom: 10px;
+            }
+        }
+    }    
 }
 
 @media (max-width: 320px) {
-    
+    .home-section-hero{
+        .select-form1{
+            .select-itms1{
+                margin-bottom: 10px;
+            }
+        }
+        .select-form2{
+            .select-itms2{
+                margin-bottom: 10px;
+            }
+        }
+    }    
 }
 

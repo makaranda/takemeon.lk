@@ -210,7 +210,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="count-job mb-35">
-                                            <span>{{ number_format($jobsCount) }} Jobs found</span>
+                                            <span>{{ number_format($jobsCount) }} Employees found</span>
                                             <!-- Select job items start -->
                                             <div class="select-job-items">
                                                 <span>Sort by</span>
